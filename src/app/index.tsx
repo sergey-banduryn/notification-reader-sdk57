@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   StyleSheet,
   Text,
-  View,
   TextInput,
   TouchableOpacity,
   Alert,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import * as Speech from "expo-speech";
+import { VoiceSettings, VoiceSettingsData } from "./VoiceSettings";
 
-// Настройка отображения уведомлений во время работы приложения
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: true,
@@ -26,6 +26,20 @@ export default function HomeScreen() {
   const [body, setBody] = useState<string>(
     "Привет! Это проверка работы озвучивания текста.",
   );
+
+  // 1. Состояние для хранения настроек голоса
+  const [voiceSettings, setVoiceSettings] = useState<VoiceSettingsData>({
+    rate: 1.0,
+    pitch: 1.0,
+    volume: 1.0,
+    voice: undefined,
+  });
+
+  // 2. Ref для доступа к актуальным настройкам внутри слушателя уведомлений
+  const voiceSettingsRef = useRef(voiceSettings);
+  useEffect(() => {
+    voiceSettingsRef.current = voiceSettings;
+  }, [voiceSettings]);
 
   useEffect(() => {
     async function requestPermissions() {
@@ -44,7 +58,14 @@ export default function HomeScreen() {
         const textToSpeak = notification.request.content.body;
         if (textToSpeak) {
           Speech.stop();
-          Speech.speak(textToSpeak, { language: "ru-RU" });
+          const currentSettings = voiceSettingsRef.current;
+          Speech.speak(textToSpeak, {
+            language: "ru-RU",
+            rate: currentSettings.rate,
+            pitch: currentSettings.pitch,
+            volume: currentSettings.volume,
+            voice: currentSettings.voice,
+          });
         }
       },
     );
@@ -60,49 +81,63 @@ export default function HomeScreen() {
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-        seconds: 2,
+        seconds: 1,
       },
     });
   };
 
   const speakText = () => {
     Speech.stop();
-    Speech.speak(`${title}. ${body}`, { language: "ru-RU" });
+    Speech.speak(`${title}. ${body}`, {
+      language: "ru-RU",
+      rate: voiceSettings.rate,
+      pitch: voiceSettings.pitch,
+      volume: voiceSettings.volume,
+      voice: voiceSettings.voice,
+    });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Тестирование Уведомлений и TTS</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.header}>Тестирование Уведомлений и TTS</Text>
 
-      <Text style={styles.label}>Заголовок уведомления:</Text>
-      <TextInput
-        style={styles.input}
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Заголовок"
-      />
+        <Text style={styles.label}>Заголовок уведомления:</Text>
+        <TextInput
+          style={styles.input}
+          value={title}
+          onChangeText={setTitle}
+          placeholder="Заголовок"
+        />
 
-      <Text style={styles.label}>Текст для озвучки:</Text>
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        value={body}
-        onChangeText={setBody}
-        placeholder="Текст сообщения"
-        multiline
-      />
+        <Text style={styles.label}>Текст для озвучки:</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          value={body}
+          onChangeText={setBody}
+          placeholder="Текст сообщения"
+          multiline
+        />
 
-      <TouchableOpacity style={styles.button} onPress={sendNotification}>
-        <Text style={styles.buttonText}>
-          🔔 Отправить уведомление (через 2 сек)
-        </Text>
-      </TouchableOpacity>
+        {/* 3. Подключение компонента настроек */}
+        <VoiceSettings
+          settings={voiceSettings}
+          onChangeSettings={setVoiceSettings}
+        />
 
-      <TouchableOpacity
-        style={[styles.button, styles.speakButton]}
-        onPress={speakText}
-      >
-        <Text style={styles.buttonText}>🔊 Озвучить прямо сейчас</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={sendNotification}>
+          <Text style={styles.buttonText}>
+            🔔 Отправить уведомление (через 2 сек)
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.button, styles.speakButton]}
+          onPress={speakText}
+        >
+          <Text style={styles.buttonText}>🔊 Озвучить прямо сейчас</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -110,14 +145,15 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    justifyContent: "center",
     backgroundColor: "#f5f5f5",
+  },
+  scrollContent: {
+    padding: 20,
   },
   header: {
     fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 15,
     textAlign: "center",
   },
   label: {
@@ -131,10 +167,10 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 8,
     padding: 10,
-    marginBottom: 15,
+    marginBottom: 10,
   },
   textArea: {
-    height: 80,
+    height: 70,
     textAlignVertical: "top",
   },
   button: {
@@ -143,6 +179,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 10,
+    marginTop: 5,
   },
   speakButton: {
     backgroundColor: "#34C759",
