@@ -1,10 +1,11 @@
 {
   "name": "notification-reader-sdk57",
-  "main": "expo-router/entry",
+  "main": "index.ts",
   "version": "1.0.0",
   "dependencies": {
     "@expo/ui": "~57.0.26",
     "expo": "~57.0.31",
+    "expo-build-properties": "~57.0.22",
     "expo-constants": "~57.0.22",
     "expo-dev-client": "~57.0.20",
     "expo-device": "~57.0.2",
@@ -23,6 +24,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
+    "react-native-android-notification-listener": "^5.0.1",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
@@ -41,6 +43,11 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint"
+  },
+  "overrides": {
+    "react-native-android-notification-listener": {
+      "react": "$react"
+    }
   },
   "private": true
 }
