@@ -37,13 +37,11 @@
         "expo-build-properties",
         {
           "android": {
-            "allowBackup": false,
-            "manifestAttributes": {
-              "tools:replace": "android:allowBackup"
-            }
+            "allowBackup": false
           }
         }
-      ]
+      ],
+      "./plugins/withAllowBackup"
     ],
     "experiments": {
       "typedRoutes": true,
