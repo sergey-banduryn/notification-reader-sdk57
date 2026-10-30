@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import * as Speech from "expo-speech";
-import { Stepper } from "./Stepper";
+import { Stepper } from "../components/Stepper";
 
 export interface VoiceSettingsData {
   rate: number;
@@ -30,10 +30,10 @@ export const VoiceSettings: React.FC<VoiceSettingsProps> = ({
   useEffect(() => {
     async function loadVoices() {
       const availableVoices = await Speech.getAvailableVoicesAsync();
-      const ruVoices = availableVoices.filter((v) =>
-        v.language.toLowerCase().startsWith("ru"),
+      const voices = availableVoices.filter((v) =>
+        v.language.toLowerCase().startsWith("uk"),
       );
-      setVoices(ruVoices.length > 0 ? ruVoices : availableVoices);
+      setVoices(voices.length > 0 ? voices : availableVoices);
     }
     loadVoices();
   }, []);

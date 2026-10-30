@@ -18,7 +18,7 @@ import {
   getPermissionStatus,
   requestPermission,
 } from "react-native-android-notification-listener";
-import { VoiceSettings, VoiceSettingsData } from "./VoiceSettings";
+import { VoiceSettings, VoiceSettingsData } from "../components/VoiceSettings";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
