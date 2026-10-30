@@ -31,7 +31,18 @@ jobs:
         run: npm ci
 
       - name: Генерация нативного кода Expo
-        run: npx expo prebuild --platform android
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Кэширование C++ / NDK артефактов
+        uses: actions/cache@v6
+        with:
+          path: |
+            android/app/.cxx
+            android/.cxx
+            node_modules/**/android/.cxx
+          key: ${{ runner.os }}-ndk-${{ hashFiles('**/CMakeLists.txt', '**/*.cpp', '**/*.h', '**/build.gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-ndk-
 
       - name: Сборка APK через Gradle
         run: |
