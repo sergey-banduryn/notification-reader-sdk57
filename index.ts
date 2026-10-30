@@ -8,7 +8,7 @@ if (Platform.OS === "android") {
     RNAndroidNotificationListenerHeadlessJsName,
   } = require("react-native-android-notification-listener");
 
-  interface TelegramNotificationData {
+  interface NotificationData {
     app?: string;
     title?: string;
     text?: string;
@@ -24,20 +24,37 @@ if (Platform.OS === "android") {
     if (!notification) return;
 
     try {
-      const data: TelegramNotificationData = JSON.parse(notification);
+      const data: NotificationData = JSON.parse(notification);
 
-      if (data.app === "org.telegram.messenger") {
-        const title: string = data.title ? `${data.title}. ` : "";
+      // console.log("Уведомление:", {
+      //   app: data.app,
+      //   title: data.title,
+      //   text: data.text,
+      // });
+
+      if (
+        data.app === "com.whatsapp" &&
+        data.title === "Цехи Підприємства: Імпульс Диспетчер"
+      ) {
+        // const title: string = data.title ? `${data.title}. ` : "";
         const text: string = data.text || "";
-        const textToSpeak: string = `${title}${text}`.trim();
+        const textToSpeak: string = `${text}`.trim();
 
         if (textToSpeak) {
           Speech.stop();
-          Speech.speak(textToSpeak, { language: "uk-UA" });
+          Speech.speak(textToSpeak, {
+            language: "uk-UA",
+            voice: "uk-ua-x-hfd-local",
+          });
         }
       }
     } catch (error) {
-      console.error("Ошибка при обработке фонового уведомления:", error);
+      // console.error("Ошибка при обработке фонового уведомления:", error);
+      Speech.stop();
+      Speech.speak("Ошибка при обработке фонового уведомления", {
+        language: "ru-RU",
+        voice: "ru-ru-x-ruf-local",
+      });
     }
   };
 
