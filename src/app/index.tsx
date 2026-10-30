@@ -27,9 +27,9 @@ Notifications.setNotificationHandler({
 });
 
 export default function HomeScreen(): React.JSX.Element {
-  const [title, setTitle] = useState<string>("Тестовое уведомление");
+  const [title, setTitle] = useState<string>("Тестове повідомлення");
   const [body, setBody] = useState<string>(
-    "Привет! Это проверка работы озвучивания текста.",
+    "Привіт! Це перевірка роботи озвучування тексту.",
   );
   const [hasListenerPermission, setHasListenerPermission] =
     useState<boolean>(false);
@@ -86,7 +86,7 @@ export default function HomeScreen(): React.JSX.Element {
           Speech.stop();
           const currentSettings = voiceSettingsRef.current;
           Speech.speak(textToSpeak, {
-            language: "ru-RU",
+            language: "uk-UA",
             rate: currentSettings.rate,
             pitch: currentSettings.pitch,
             volume: currentSettings.volume,
@@ -135,7 +135,7 @@ export default function HomeScreen(): React.JSX.Element {
   const speakText = (): void => {
     Speech.stop();
     Speech.speak(`${title}. ${body}`, {
-      language: "ru-RU",
+      language: "uk-UA",
       rate: voiceSettings.rate,
       pitch: voiceSettings.pitch,
       volume: voiceSettings.volume,

@@ -33,7 +33,7 @@ if (Platform.OS === "android") {
 
         if (textToSpeak) {
           Speech.stop();
-          Speech.speak(textToSpeak, { language: "ru-RU" });
+          Speech.speak(textToSpeak, { language: "uk-UA" });
         }
       }
     } catch (error) {
