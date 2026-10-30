@@ -14,10 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Notifications from "expo-notifications";
 import * as Speech from "expo-speech";
-import {
-  getPermissionStatus,
-  requestPermission,
-} from "react-native-android-notification-listener";
+import RNAndroidNotificationListener from "react-native-android-notification-listener";
 import { VoiceSettings, VoiceSettingsData } from "../components/VoiceSettings";
 
 Notifications.setNotificationHandler({
@@ -61,7 +58,8 @@ export default function HomeScreen(): React.JSX.Element {
 
     if (nextAppState === "active" || force) {
       try {
-        const status = await getPermissionStatus();
+        const status =
+          await RNAndroidNotificationListener.getPermissionStatus();
         setHasListenerPermission(status !== "denied");
       } catch (error) {
         console.error("Ошибка проверки прав доступа:", error);
@@ -112,7 +110,7 @@ export default function HomeScreen(): React.JSX.Element {
 
   const requestAndroidListenerPermission = (): void => {
     if (Platform.OS === "android") {
-      requestPermission();
+      RNAndroidNotificationListener.requestPermission();
     } else {
       Alert.alert(
         "Информация",
