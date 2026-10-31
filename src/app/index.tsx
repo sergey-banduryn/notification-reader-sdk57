@@ -19,7 +19,7 @@ export default function HomeScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f5f5f5" },
+  container: { flex: 1, backgroundColor: "#07065e6b" },
   scrollContent: { padding: 20 },
   header: {
     fontSize: 20,

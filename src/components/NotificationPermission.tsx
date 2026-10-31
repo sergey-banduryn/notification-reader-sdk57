@@ -95,11 +95,13 @@ export const NotificationPermission: React.FC = () => {
   };
 
   const exitAppCompletely = async () => {
-    // Сначала останавливаем фоновый сервис
-    await stopForegroundService();
-
-    // Завершаем процесс приложения на Android
-    BackHandler.exitApp();
+    try {
+      await stopForegroundService();
+    } catch (error) {
+      console.error("Ошибка при остановке фоновой службы:", error);
+    } finally {
+      BackHandler.exitApp();
+    }
   };
 
   return (
