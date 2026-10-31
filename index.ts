@@ -2,6 +2,13 @@ import "expo-router/entry";
 import { AppRegistry, Platform } from "react-native";
 import * as Speech from "expo-speech";
 import { setAudioModeAsync } from "expo-audio";
+import notifee from "@notifee/react-native";
+
+notifee.registerForegroundService((notification) => {
+  return new Promise(() => {
+    // Сервис будет удерживаться активным, пока отображается переднеплановое уведомление
+  });
+});
 
 // Выполняем регистрацию Headless Task только на платформе Android
 if (Platform.OS === "android") {
