@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   Linking,
+  BackHandler,
 } from "react-native";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
 import notifee, { AndroidImportance } from "@notifee/react-native";
@@ -113,6 +114,32 @@ export const NotificationPermission: React.FC = () => {
     requestIgnoreBatteryOptimization();
   };
 
+  // Остановка переднепланового сервиса и удаление уведомления
+  const stopForegroundService = async (): Promise<void> => {
+    try {
+      // 1. Снимаем статус Foreground Service для уведомления
+      await notifee.stopForegroundService();
+
+      // 2. Полностью удаляем уведомление из шторки
+      await notifee.cancelNotification("foreground_service");
+    } catch (error) {
+      console.error("Ошибка при остановке Foreground Service:", error);
+    }
+  };
+
+  const exitApp = async () => {
+    // Завершаем процесс приложения на Android
+    BackHandler.exitApp();
+  };
+
+  const exitAppCompletely = async () => {
+    // Сначала останавливаем фоновый сервис
+    await stopForegroundService();
+
+    // Завершаем процесс приложения на Android
+    BackHandler.exitApp();
+  };
+
   return (
     <View style={styles.permissionCard}>
       <Text style={styles.permissionTitle}>Доступ к уведомлениям:</Text>
@@ -141,14 +168,32 @@ export const NotificationPermission: React.FC = () => {
       )}
 
       {Platform.OS === "android" && hasListenerPermission && (
-        <TouchableOpacity
-          style={[styles.permissionButton, styles.batteryButton]}
-          onPress={openBatterySettings}
-        >
-          <Text style={styles.buttonText}>
-            Отключить ограничение батареи (Doze Mode)
-          </Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            style={[styles.permissionButton, styles.batteryButton]}
+            onPress={openBatterySettings}
+          >
+            <Text style={styles.buttonText}>
+              Отключить ограничение батареи (Doze Mode)
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.permissionButton, { backgroundColor: "#FF3B30" }]}
+            onPress={exitAppCompletely}
+          >
+            <Text style={styles.buttonText}>
+              Остановить фоновую службу и закрыть приложение
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.permissionButton, { backgroundColor: "#007AFF" }]}
+            onPress={exitApp}
+          >
+            <Text style={styles.buttonText}>Выход</Text>
+          </TouchableOpacity>
+        </>
       )}
     </View>
   );
