@@ -1,5 +1,6 @@
 import * as Speech from "expo-speech";
 import { setAudioModeAsync } from "expo-audio";
+import { loadVolume } from "@/services/StorageService";
 
 interface NotificationData {
   app?: string;
@@ -15,6 +16,8 @@ export const processNotification = async ({
   notification,
 }: NotificationEvent): Promise<void> => {
   if (!notification) return;
+
+  const volume = await loadVolume();
 
   try {
     const data: NotificationData = JSON.parse(notification);
@@ -38,6 +41,7 @@ export const processNotification = async ({
         Speech.speak(textToSpeak, {
           language: "uk-UA",
           voice: "uk-ua-x-hfd-local",
+          volume,
         });
       }
     }
@@ -54,6 +58,7 @@ export const processNotification = async ({
     Speech.speak("Ошибка при обработке фонового уведомления", {
       language: "ru-RU",
       voice: "ru-ru-x-ruf-local",
+      volume,
     });
   }
 };
