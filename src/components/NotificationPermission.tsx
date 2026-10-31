@@ -8,44 +8,19 @@ import {
   AppStateStatus,
   Platform,
   Alert,
-  Linking,
   BackHandler,
 } from "react-native";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
-import notifee, { AndroidImportance } from "@notifee/react-native";
-import * as IntentLauncher from 'expo-intent-launcher';
-import Constants from 'expo-constants';
+import * as IntentLauncher from "expo-intent-launcher";
+import Constants from "expo-constants";
+import {
+  startForegroundService,
+  stopForegroundService,
+} from "@/services/ForegroundService";
 
 export const NotificationPermission: React.FC = () => {
   const [hasListenerPermission, setHasListenerPermission] =
     useState<boolean>(false);
-
-  // Запуск постоянного переднепланового уведомления
-  const startForegroundService = async (): Promise<void> => {
-    try {
-      await notifee.requestPermission();
-
-      const channelId = await notifee.createChannel({
-        id: "notification_reader_channel",
-        name: "Фоновое озвучивание",
-        importance: AndroidImportance.LOW,
-      });
-
-      await notifee.displayNotification({
-        id: "foreground_service",
-        title: "Озвучивание уведомлений активно",
-        body: "Приложение отслеживает входящие сообщения",
-        android: {
-          channelId,
-          asForegroundService: true,
-          ongoing: true,
-          pressAction: { id: "default" },
-        },
-      });
-    } catch (error) {
-      console.error("Ошибка запуска Foreground Service:", error);
-    }
-  };
 
   const checkListenerPermission = async (
     nextAppState?: AppStateStatus,
@@ -112,19 +87,6 @@ export const NotificationPermission: React.FC = () => {
 
   const openBatterySettings = (): void => {
     requestIgnoreBatteryOptimization();
-  };
-
-  // Остановка переднепланового сервиса и удаление уведомления
-  const stopForegroundService = async (): Promise<void> => {
-    try {
-      // 1. Снимаем статус Foreground Service для уведомления
-      await notifee.stopForegroundService();
-
-      // 2. Полностью удаляем уведомление из шторки
-      await notifee.cancelNotification("foreground_service");
-    } catch (error) {
-      console.error("Ошибка при остановке Foreground Service:", error);
-    }
   };
 
   const exitApp = async () => {
