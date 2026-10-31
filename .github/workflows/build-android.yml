@@ -44,15 +44,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ndk-
 
+      - name: Настройка подписи Debug-ключом для Release
+        run: |
+          sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle
+
       - name: Сборка APK через Gradle
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a
+          ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a
 
       - name: Сохранение готового APK
         uses: actions/upload-artifact@v7
         with:
-          name: app-debug.apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: app-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
           archive: false
