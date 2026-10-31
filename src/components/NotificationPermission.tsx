@@ -8,12 +8,41 @@ import {
   AppStateStatus,
   Platform,
   Alert,
+  Linking,
 } from "react-native";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
+import notifee, { AndroidImportance } from "@notifee/react-native";
 
 export const NotificationPermission: React.FC = () => {
   const [hasListenerPermission, setHasListenerPermission] =
     useState<boolean>(false);
+
+  // Запуск постоянного переднепланового уведомления
+  const startForegroundService = async (): Promise<void> => {
+    try {
+      await notifee.requestPermission();
+
+      const channelId = await notifee.createChannel({
+        id: "notification_reader_channel",
+        name: "Фоновое озвучивание",
+        importance: AndroidImportance.LOW,
+      });
+
+      await notifee.displayNotification({
+        id: "foreground_service",
+        title: "Озвучивание уведомлений активно",
+        body: "Приложение отслеживает входящие сообщения",
+        android: {
+          channelId,
+          asForegroundService: true,
+          ongoing: true,
+          pressAction: { id: "default" },
+        },
+      });
+    } catch (error) {
+      console.error("Ошибка запуска Foreground Service:", error);
+    }
+  };
 
   const checkListenerPermission = async (
     nextAppState?: AppStateStatus,
@@ -28,7 +57,12 @@ export const NotificationPermission: React.FC = () => {
       try {
         const status =
           await RNAndroidNotificationListener.getPermissionStatus();
-        setHasListenerPermission(status !== "denied");
+        const isGranted = status !== "denied";
+        setHasListenerPermission(isGranted);
+
+        if (isGranted) {
+          await startForegroundService();
+        }
       } catch (error) {
         console.error("Ошибка проверки прав доступа:", error);
       }
@@ -58,6 +92,12 @@ export const NotificationPermission: React.FC = () => {
     }
   };
 
+  const openBatterySettings = (): void => {
+    if (Platform.OS === "android") {
+      Linking.openSettings();
+    }
+  };
+
   return (
     <View style={styles.permissionCard}>
       <Text style={styles.permissionTitle}>Доступ к уведомлениям:</Text>
@@ -70,9 +110,10 @@ export const NotificationPermission: React.FC = () => {
         {Platform.OS !== "android"
           ? "Работает только на Android"
           : hasListenerPermission
-            ? "Разрешение получено"
+            ? "Разрешение получено (Служба активна)"
             : "Доступ не предоставлен"}
       </Text>
+
       {Platform.OS === "android" && !hasListenerPermission && (
         <TouchableOpacity
           style={styles.permissionButton}
@@ -80,6 +121,17 @@ export const NotificationPermission: React.FC = () => {
         >
           <Text style={styles.buttonText}>
             Предоставить доступ в настройках Android
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      {Platform.OS === "android" && hasListenerPermission && (
+        <TouchableOpacity
+          style={[styles.permissionButton, styles.batteryButton]}
+          onPress={openBatterySettings}
+        >
+          <Text style={styles.buttonText}>
+            Отключить ограничение батареи (Doze Mode)
           </Text>
         </TouchableOpacity>
       )}
@@ -112,11 +164,15 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 6,
     alignItems: "center",
+    marginTop: 5,
+  },
+  batteryButton: {
+    backgroundColor: "#007AFF",
   },
   buttonText: {
     color: "#fff",
     fontWeight: "600",
-    fontSize: 15,
+    fontSize: 14,
     textAlign: "center",
   },
 });
