@@ -49,7 +49,8 @@
           }
         }
       ],
-      "./plugins/withAllowBackup"
+      "./plugins/withAllowBackup",
+      "./plugins/withAndroid14Fgs"
     ],
     "experiments": {
       "typedRoutes": true,
