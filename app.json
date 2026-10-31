@@ -50,7 +50,8 @@
         }
       ],
       "./plugins/withAllowBackup",
-      "./plugins/withAndroid14Fgs"
+      "./plugins/withAndroid14Fgs",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

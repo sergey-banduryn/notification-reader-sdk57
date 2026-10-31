@@ -6,7 +6,7 @@
     "@expo/ui": "~57.0.26",
     "@notifee/react-native": "^9.1.8",
     "expo": "~57.0.31",
-    "expo-av": "^16.0.8",
+    "expo-audio": "~57.0.5",
     "expo-build-properties": "~57.0.22",
     "expo-constants": "~57.0.22",
     "expo-dev-client": "~57.0.20",

@@ -1,7 +1,7 @@
 import "expo-router/entry";
 import { AppRegistry, Platform } from "react-native";
 import * as Speech from "expo-speech";
-import { Audio } from "expo-av";
+import { setAudioModeAsync } from "expo-audio";
 
 // Выполняем регистрацию Headless Task только на платформе Android
 if (Platform.OS === "android") {
@@ -42,11 +42,10 @@ if (Platform.OS === "android") {
         const textToSpeak: string = `${text}`.trim();
 
         if (textToSpeak) {
-          await Audio.setAudioModeAsync({
-            allowsRecordingIOS: false,
-            staysActiveInBackground: true,
-            shouldDuckAndroid: true,
-            playThroughEarpieceAndroid: false,
+          await setAudioModeAsync({
+            playsInSilentMode: true,
+            allowsRecording: false,
+            interruptionMode: "duckOthers",
           });
 
           Speech.stop();
@@ -59,11 +58,10 @@ if (Platform.OS === "android") {
     } catch (error) {
       // console.error("Ошибка при обработке фонового уведомления:", error);
 
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        staysActiveInBackground: true,
-        shouldDuckAndroid: true,
-        playThroughEarpieceAndroid: false,
+      await setAudioModeAsync({
+        playsInSilentMode: true,
+        allowsRecording: false,
+        interruptionMode: "duckOthers",
       });
 
       Speech.stop();
