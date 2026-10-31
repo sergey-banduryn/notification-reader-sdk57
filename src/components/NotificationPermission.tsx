@@ -12,6 +12,8 @@ import {
 } from "react-native";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
 import notifee, { AndroidImportance } from "@notifee/react-native";
+import * as IntentLauncher from 'expo-intent-launcher';
+import Constants from 'expo-constants';
 
 export const NotificationPermission: React.FC = () => {
   const [hasListenerPermission, setHasListenerPermission] =
@@ -92,10 +94,23 @@ export const NotificationPermission: React.FC = () => {
     }
   };
 
-  const openBatterySettings = (): void => {
+  const requestIgnoreBatteryOptimization = async (): Promise<void> => {
     if (Platform.OS === "android") {
-      Linking.openSettings();
+      const packageName = Constants.expoConfig?.android?.package;
+
+      try {
+        await IntentLauncher.startActivityAsync(
+          "android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+          { data: `package:${packageName}` },
+        );
+      } catch (error) {
+        console.error("Ошибка запроса отключения оптимизации батареи:", error);
+      }
     }
+  };
+
+  const openBatterySettings = (): void => {
+    requestIgnoreBatteryOptimization();
   };
 
   return (
