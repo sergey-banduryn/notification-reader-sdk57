@@ -35,7 +35,7 @@ if (Platform.OS === "android") {
 
       if (
         (data.app === "com.whatsapp" || data.app === "com.android.shell") &&
-        data.title === "Цехи Підприємства: Імпульс Диспетчер"
+        data.title?.includes("Цехи Підприємства: Імпульс Диспетчер")
       ) {
         // const title: string = data.title ? `${data.title}. ` : "";
         const text: string = data.text || "";
