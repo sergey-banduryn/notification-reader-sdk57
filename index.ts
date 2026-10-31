@@ -34,17 +34,11 @@ if (Platform.OS === "android") {
     try {
       const data: NotificationData = JSON.parse(notification);
 
-      // console.log("Уведомление:", {
-      //   app: data.app,
-      //   title: data.title,
-      //   text: data.text,
-      // });
-
       if (
         (data.app === "com.whatsapp" || data.app === "com.android.shell") &&
         data.title?.includes("Цехи Підприємства: Імпульс Диспетчер")
       ) {
-        // const title: string = data.title ? `${data.title}. ` : "";
+        const title: string = data.title ? `${data.title}. ` : "";
         const text: string = data.text || "";
         const textToSpeak: string = `${text}`.trim();
 
@@ -63,7 +57,7 @@ if (Platform.OS === "android") {
         }
       }
     } catch (error) {
-      // console.error("Ошибка при обработке фонового уведомления:", error);
+      console.error("Ошибка при обработке фонового уведомления:", error);
 
       await setAudioModeAsync({
         playsInSilentMode: true,
