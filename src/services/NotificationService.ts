@@ -1,6 +1,7 @@
 import * as Speech from "expo-speech";
 import { setAudioModeAsync } from "expo-audio";
 import { loadVolume } from "@/services/StorageService";
+import { logNotification, logError } from "@/services/LoggerService";
 
 interface NotificationData {
   app?: string;
@@ -16,6 +17,8 @@ export const processNotification = async ({
   notification,
 }: NotificationEvent): Promise<void> => {
   if (!notification) return;
+
+  await logNotification(notification);
 
   const volume = await loadVolume();
 
@@ -46,7 +49,7 @@ export const processNotification = async ({
       }
     }
   } catch (error) {
-    console.error("Ошибка при обработке фонового уведомления:", error);
+    await logError("processNotification", error);
 
     await setAudioModeAsync({
       playsInSilentMode: true,

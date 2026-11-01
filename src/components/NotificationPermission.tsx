@@ -17,6 +17,7 @@ import {
   startForegroundService,
   stopForegroundService,
 } from "@/services/ForegroundService";
+import { logError } from "@/services/LoggerService";
 
 export const NotificationPermission: React.FC = () => {
   const [hasListenerPermission, setHasListenerPermission] =
@@ -42,7 +43,7 @@ export const NotificationPermission: React.FC = () => {
           await startForegroundService();
         }
       } catch (error) {
-        console.error("Ошибка проверки прав доступа:", error);
+        await logError("checkListenerPermission", error);
       }
     }
   };
@@ -80,7 +81,7 @@ export const NotificationPermission: React.FC = () => {
           { data: `package:${packageName}` },
         );
       } catch (error) {
-        console.error("Ошибка запроса отключения оптимизации батареи:", error);
+        await logError("requestIgnoreBatteryOptimization", error);
       }
     }
   };
@@ -98,7 +99,7 @@ export const NotificationPermission: React.FC = () => {
     try {
       await stopForegroundService();
     } catch (error) {
-      console.error("Ошибка при остановке фоновой службы:", error);
+      await logError("exitAppCompletely", error);
     } finally {
       BackHandler.exitApp();
     }

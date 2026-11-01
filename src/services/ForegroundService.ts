@@ -1,4 +1,5 @@
 import notifee, { AndroidImportance } from "@notifee/react-native";
+import { logError } from "./LoggerService";
 
 // Запуск постоянного переднепланового уведомления
 export const startForegroundService = async (): Promise<void> => {
@@ -23,7 +24,7 @@ export const startForegroundService = async (): Promise<void> => {
       },
     });
   } catch (error) {
-    console.error("Ошибка запуска Foreground Service:", error);
+    await logError("startForegroundService", error);
   }
 };
 
@@ -36,6 +37,6 @@ export const stopForegroundService = async (): Promise<void> => {
     // 2. Полностью удаляем уведомление из шторки
     await notifee.cancelNotification("foreground_service");
   } catch (error) {
-    console.error("Ошибка при остановке Foreground Service:", error);
+    await logError("stopForegroundService", error);
   }
 };
