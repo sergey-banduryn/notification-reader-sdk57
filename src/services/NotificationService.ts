@@ -27,7 +27,7 @@ export const processNotification = async ({
 
     if (
       (data.app === "com.whatsapp" || data.app === "com.android.shell") &&
-      data.title?.includes("Цехи Підприємства: Імпульс Диспетчер")
+      data.title?.includes("Цехи")
     ) {
       const title: string = data.title ? `${data.title}. ` : "";
       const text: string = data.text || "";
