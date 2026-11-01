@@ -44,7 +44,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ndk-
 
+      - name: Определение параметров сборки
+        run: |
+          MSG="${{ github.event.head_commit.message }}"
+
+          if [[ "$MSG" == *"[debug]"* ]]; then
+            TYPE="debug"
+          elif [[ "$MSG" == *"[release]"* ]]; then
+            TYPE="release"
+          else
+            TYPE="debug" # По умолчанию при отсутствии меток
+          fi
+
+          echo "BUILD_TYPE=$TYPE" >> $GITHUB_ENV
+          if [ "$TYPE" = "debug" ]; then
+            echo "TASK=assembleDebug" >> $GITHUB_ENV
+          else
+            echo "TASK=assembleRelease" >> $GITHUB_ENV
+          fi
+
       - name: Настройка подписи Debug-ключом для Release
+        if: ${{ env.BUILD_TYPE == 'release' }}
         run: |
           sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle
 
@@ -52,11 +72,11 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a
+          ./gradlew ${{ env.TASK }} -PreactNativeArchitectures=arm64-v8a
 
       - name: Сохранение готового APK
         uses: actions/upload-artifact@v7
         with:
-          name: app-release.apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          name: app-${{ env.BUILD_TYPE }}.apk
+          path: android/app/build/outputs/apk/${{ env.BUILD_TYPE }}/app-${{ env.BUILD_TYPE }}.apk
           archive: false
