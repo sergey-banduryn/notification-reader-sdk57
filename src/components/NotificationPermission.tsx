@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   BackHandler,
+  Linking,
 } from "react-native";
 import RNAndroidNotificationListener from "react-native-android-notification-listener";
 import * as IntentLauncher from "expo-intent-launcher";
@@ -18,56 +19,38 @@ import {
   stopForegroundService,
 } from "@/services/ForegroundService";
 import { logError } from "@/services/LoggerService";
+import notifee from "@notifee/react-native";
 
 export const NotificationPermission: React.FC = () => {
   const [hasListenerPermission, setHasListenerPermission] =
     useState<boolean>(false);
 
-  const checkListenerPermission = async (
-    nextAppState?: AppStateStatus,
-    force = false,
-  ): Promise<void> => {
+  const checkListenerPermission = async (): Promise<void> => {
     if (Platform.OS !== "android") {
       setHasListenerPermission(false);
       return;
     }
 
-    if (nextAppState === "active" || force) {
-      try {
-        const status =
-          await RNAndroidNotificationListener.getPermissionStatus();
-        const isGranted = status !== "denied";
-        setHasListenerPermission(isGranted);
+    try {
+      const status = await RNAndroidNotificationListener.getPermissionStatus();
+      const isGranted = status !== "denied";
+      setHasListenerPermission(isGranted);
 
-        if (isGranted) {
-          await startForegroundService();
-        }
-      } catch (error) {
-        await logError("checkListenerPermission", error);
+      if (isGranted) {
+        await startForegroundService();
       }
+    } catch (error) {
+      await logError("checkListenerPermission", error);
     }
   };
 
   useEffect(() => {
-    checkListenerPermission(undefined, true);
-    const appStateListener = AppState.addEventListener(
-      "change",
-      checkListenerPermission,
-    );
-
-    return () => {
-      appStateListener.remove();
-    };
+    checkListenerPermission();
   }, []);
 
   const requestAndroidListenerPermission = (): void => {
     if (Platform.OS === "android") {
       RNAndroidNotificationListener.requestPermission();
-    } else {
-      Alert.alert(
-        "Информация",
-        "Перехват уведомлений доступен только на Android",
-      );
     }
   };
 
@@ -104,6 +87,19 @@ export const NotificationPermission: React.FC = () => {
       BackHandler.exitApp();
     }
   };
+
+  const openNotificationListenerSettings = () => {
+    if (Platform.OS === "android") {
+      Linking.sendIntent(
+        "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS",
+      );
+    }
+  };
+
+  async function log() {
+    const status = await RNAndroidNotificationListener.getPermissionStatus();
+    console.log("Реальный статус разрешения:", status);
+  }
 
   return (
     <View style={styles.permissionCard}>
@@ -160,6 +156,28 @@ export const NotificationPermission: React.FC = () => {
           </TouchableOpacity>
         </>
       )}
+      <TouchableOpacity
+        style={[styles.permissionButton, { backgroundColor: "#007AFF" }]}
+        onPress={openNotificationListenerSettings}
+      >
+        <Text style={styles.buttonText}>openNotificationListenerSettings</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.permissionButton, { backgroundColor: "#007AFF" }]}
+        onPress={() => {
+          notifee.openNotificationSettings();
+        }}
+      >
+        <Text style={styles.buttonText}>openNotifeeNotificationSettings</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.permissionButton, { backgroundColor: "#007AFF" }]}
+        onPress={log}
+      >
+        <Text style={styles.buttonText}>log</Text>
+      </TouchableOpacity>
     </View>
   );
 };
