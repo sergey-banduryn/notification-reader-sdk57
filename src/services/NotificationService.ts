@@ -2,6 +2,9 @@ import * as Speech from "expo-speech";
 import { setAudioModeAsync } from "expo-audio";
 import { loadVolume } from "@/services/StorageService";
 import { logNotification, logError } from "@/services/LoggerService";
+import Constants from "expo-constants";
+
+const APP_PACKAGE_NAME = Constants.expoConfig?.android?.package;
 
 interface NotificationData {
   app?: string;
@@ -18,15 +21,19 @@ export const processNotification = async ({
 }: NotificationEvent): Promise<void> => {
   if (!notification) return;
 
-  await logNotification(notification);
+  const { icon, ...loggedNotification } = JSON.parse(notification);
+
+  logNotification(loggedNotification);
 
   const volume = await loadVolume();
 
   try {
-    const data: NotificationData = JSON.parse(notification);
+    const data: NotificationData = loggedNotification;
 
     if (
-      (data.app === "com.whatsapp" || data.app === "com.android.shell") &&
+      (data.app === "com.whatsapp" ||
+        data.app === "com.android.shell" ||
+        data.app === APP_PACKAGE_NAME) &&
       data.title?.includes("Цехи")
     ) {
       const title: string = data.title ? `${data.title}. ` : "";
