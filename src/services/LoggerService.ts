@@ -21,7 +21,8 @@ const appendToFile = async (filePath: string, text: string): Promise<void> => {
 
 // Сохранение входящих уведомлений
 export const logNotification = async (data: unknown): Promise<void> => {
-  const content = typeof data === "string" ? data : JSON.stringify(data);
+  const content =
+    typeof data === "string" ? data : JSON.stringify(data, null, "\t");
   await appendToFile(NOTIFICATION_LOG_PATH, `УВЕДОМЛЕНИЕ: ${content}`);
 };
 
