@@ -19,7 +19,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export const NotificationTester: React.FC = () => {
+export const NotificationTester1: React.FC = () => {
   const [title, setTitle] = useState<string>(
     "Цехи Підприємства: Імпульс Диспетчер",
   );

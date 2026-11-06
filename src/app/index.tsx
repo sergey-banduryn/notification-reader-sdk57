@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { NotificationPermission } from "../components/NotificationPermission";
 import { VolumeControl } from "@/components/VolumeControl";
-import { NotificationTester } from "@/components/NotificationTester1";
+import { NotificationTester1 } from "@/components/NotificationTester1";
 
 export default function HomeScreen(): React.JSX.Element {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function HomeScreen(): React.JSX.Element {
         <Text style={styles.header}>Уведомления</Text>
         <VolumeControl />
         <NotificationPermission />
-        <NotificationTester />
+        <NotificationTester1 />
 
         <TouchableOpacity
           style={styles.logsButton}
