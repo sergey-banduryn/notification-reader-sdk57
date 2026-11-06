@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   },
   voiceList: {
     // maxHeight: 300,
-    maxHeight: 'auto',
+    maxHeight: "auto",
   },
   voiceItem: {
     padding: 8,

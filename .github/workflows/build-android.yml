@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -16,13 +16,13 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 26
-          cache: 'npm'
+          cache: "npm"
 
       - name: Настройка Java (JDK 17)
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
 
       - name: Настройка и кэширование Gradle
         uses: gradle/actions/setup-gradle@v6
