@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     marginVertical: 6,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#333",
   },
   valueText: {
