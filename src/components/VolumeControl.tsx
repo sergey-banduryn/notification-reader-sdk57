@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Stepper } from "./Stepper";
 import { loadVolume, saveVolume } from "@/services/StorageService";
 
@@ -16,7 +16,7 @@ export const VolumeControl: React.FC = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <Stepper
         label="Громкость"
         value={volume}
@@ -29,3 +29,16 @@ export const VolumeControl: React.FC = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingVertical: 5,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+  },
+});
