@@ -3,7 +3,7 @@ import { AppRegistry, Platform } from "react-native";
 import notifee from "@notifee/react-native";
 import { processNotification } from "@/services/NotificationService";
 
-notifee.registerForegroundService((notification) => {
+notifee.registerForegroundService(() => {
   return new Promise(() => {
     // Сервис будет удерживаться активным, пока отображается переднеплановое уведомление
   });

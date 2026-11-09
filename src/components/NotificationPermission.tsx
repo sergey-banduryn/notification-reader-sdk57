@@ -4,10 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  AppState,
-  AppStateStatus,
   Platform,
-  Alert,
   BackHandler,
   Linking,
 } from "react-native";
