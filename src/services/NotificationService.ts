@@ -44,7 +44,6 @@ export const processNotification = async ({
         data.app === APP_PACKAGE_NAME) &&
       data.title?.includes("Цехи")
     ) {
-      const title: string = data.title ? `${data.title}. ` : "";
       const text: string = data.text || "";
       let textToSpeak: string = `${text}`.trim();
 
@@ -68,6 +67,9 @@ export const processNotification = async ({
           language: "uk-UA",
           voice: "uk-ua-x-hfd-local",
           volume,
+          onError: (error) => {
+            logError("processNotification.Speech", error);
+          },
         });
       }
     }
