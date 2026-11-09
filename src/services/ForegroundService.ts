@@ -38,3 +38,10 @@ export const stopForegroundService = async (): Promise<void> => {
     await logError("stopForegroundService", error);
   }
 };
+
+export const isForegroundServiceRunning = async (): Promise<boolean> => {
+  const notifications = await notifee.getDisplayedNotifications();
+  return notifications.some(
+    (notification) => notification.id === "foreground_service",
+  );
+};
