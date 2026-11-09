@@ -5,7 +5,7 @@ import { LogViewer } from "@/components/LogViewer";
 
 export default function LogsScreen(): React.JSX.Element {
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <LogViewer />
     </SafeAreaView>
   );
@@ -14,7 +14,6 @@ export default function LogsScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    padding: 15,
+    padding: 20,
   },
 });
