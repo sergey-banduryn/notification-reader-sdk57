@@ -46,7 +46,15 @@ export const processNotification = async ({
     ) {
       const title: string = data.title ? `${data.title}. ` : "";
       const text: string = data.text || "";
-      const textToSpeak: string = `${text}`.trim();
+      let textToSpeak: string = `${text}`.trim();
+
+      const { groupedMessages } = data;
+      if (groupedMessages && groupedMessages.length !== 0) {
+        const lastMessage = groupedMessages[groupedMessages.length - 1];
+        textToSpeak = lastMessage.text || "";
+      }
+
+      textToSpeak = textToSpeak.replace("Імпульс Диспетчер", "");
 
       if (textToSpeak) {
         await setAudioModeAsync({
