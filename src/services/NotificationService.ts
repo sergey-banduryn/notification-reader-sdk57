@@ -10,6 +10,12 @@ interface NotificationData {
   app?: string;
   title?: string;
   text?: string;
+  icon?: string;
+  iconLarge?: string;
+  groupedMessages?: {
+    text?: string;
+    title?: string;
+  }[];
 }
 
 interface NotificationEvent {
@@ -21,14 +27,16 @@ export const processNotification = async ({
 }: NotificationEvent): Promise<void> => {
   if (!notification) return;
 
-  const { icon, ...loggedNotification } = JSON.parse(notification);
+  const { icon, iconLarge, ...loggedNotification } = JSON.parse(
+    notification,
+  ) as NotificationData;
 
   logNotification(loggedNotification);
 
   const volume = await loadVolume();
 
   try {
-    const data: NotificationData = loggedNotification;
+    const data = loggedNotification;
 
     if (
       (data.app === "com.whatsapp" ||
