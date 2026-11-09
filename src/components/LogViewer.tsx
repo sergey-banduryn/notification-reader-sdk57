@@ -41,8 +41,7 @@ export const LogViewer: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Логи системы</Text>
-
+      <Text style={styles.title}>Логи</Text>
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[
@@ -92,29 +91,25 @@ export const LogViewer: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
-    padding: 15,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#e0e0e0",
-    maxHeight: 400,
+    flex: 1,
   },
   title: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
+    textAlign: "center",
   },
   tabContainer: {
     flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   tab: {
-    flex: 1,
+    flex: 0.48,
     padding: 8,
     backgroundColor: "#e0e0e0",
     alignItems: "center",
     borderRadius: 4,
-    marginHorizontal: 2,
   },
   activeTab: {
     backgroundColor: "#007AFF",
@@ -143,7 +138,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#1e1e1e",
     borderRadius: 6,
     padding: 10,
-    maxHeight: 250,
   },
   logText: {
     color: "#00ff00",
