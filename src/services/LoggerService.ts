@@ -3,6 +3,8 @@ import { Dirs, FileSystem } from "react-native-file-access";
 const NOTIFICATION_LOG_PATH = `${Dirs.DocumentDir}/notifications.log`;
 const ERROR_LOG_PATH = `${Dirs.DocumentDir}/errors.log`;
 
+const splitter = `---\n`;
+
 // Форматирование даты для лога
 const getTimestamp = (): string => {
   const now = new Date();
@@ -13,7 +15,7 @@ const getTimestamp = (): string => {
 const appendToFile = async (filePath: string, text: string): Promise<void> => {
   try {
     const line = `[${getTimestamp()}] ${text}\n`;
-    await FileSystem.appendFile(filePath, line, "utf8");
+    await FileSystem.appendFile(filePath, splitter + line, "utf8");
   } catch (err) {
     console.error("Не удалось записать лог в файл:", err);
   }
@@ -41,7 +43,8 @@ export const getNotificationLogs = async (): Promise<string> => {
   try {
     const exists = await FileSystem.exists(NOTIFICATION_LOG_PATH);
     if (!exists) return "Логи уведомлений отсутствуют.";
-    return await FileSystem.readFile(NOTIFICATION_LOG_PATH, "utf8");
+    const content = await FileSystem.readFile(NOTIFICATION_LOG_PATH, "utf8");
+    return content.trim().split(splitter).reverse().join(splitter);
   } catch {
     return "Ошибка при чтении файла логов уведомлений.";
   }
@@ -52,7 +55,8 @@ export const getErrorLogs = async (): Promise<string> => {
   try {
     const exists = await FileSystem.exists(ERROR_LOG_PATH);
     if (!exists) return "Логи ошибок отсутствуют.";
-    return await FileSystem.readFile(ERROR_LOG_PATH, "utf8");
+    const content = await FileSystem.readFile(ERROR_LOG_PATH, "utf8");
+    return content.trim().split(splitter).reverse().join(splitter);
   } catch {
     return "Ошибка при чтении файла логов ошибок.";
   }
