@@ -4,8 +4,6 @@ import { logError } from "./LoggerService";
 // Запуск постоянного переднепланового уведомления
 export const startForegroundService = async (): Promise<void> => {
   try {
-    await notifee.requestPermission();
-
     const channelId = await notifee.createChannel({
       id: "notification_reader_channel",
       name: "Фоновое озвучивание",
