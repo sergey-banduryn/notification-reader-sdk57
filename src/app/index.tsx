@@ -1,52 +1,40 @@
-import React from "react";
-import { StyleSheet, Text, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import { NotificationPermission } from "../components/NotificationPermission";
 import { VolumeControl } from "@/components/VolumeControl";
-import { NotificationTester1 } from "@/components/NotificationTester1";
+import { Permissions } from "@/components/Permissions";
+import { useAppManager } from "@/hooks/useAppManager";
+import { ForegroundServiceControl } from "@/components/ForegroundServiceControl";
 
-export default function HomeScreen(): React.JSX.Element {
-  const router = useRouter();
+export default function HomeScreen() {
+  const { permissions } = useAppManager();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.header}>Уведомления</Text>
-        <VolumeControl />
-        <NotificationPermission />
-        <NotificationTester1 />
-
-        <TouchableOpacity
-          style={styles.logsButton}
-          onPress={() => router.push("/logs")}
-        >
-          <Text style={styles.buttonText}>Открыть логи</Text>
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <ScrollView>
+        <Permissions {...{ permissions }} />
+        <Text style={styles.title}>Настройки</Text>
+        <View style={styles.settingsContainer}>
+          <ForegroundServiceControl {...{ permissions }} />
+          <VolumeControl />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#07065e6b" },
-  scrollContent: { padding: 20 },
-  header: {
-    fontSize: 20,
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  settingsContainer: {
+    gap: 10,
+  },
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 15,
+    color: "#1A1A1A",
     textAlign: "center",
-  },
-  logsButton: {
-    backgroundColor: "#007AFF",
-    padding: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 16,
+    marginBottom: 10,
   },
 });
