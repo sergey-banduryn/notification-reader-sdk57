@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Stepper } from "./Stepper";
-import { loadVolume, saveVolume } from "@/services/StorageService";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 
-export const VolumeControl: React.FC = () => {
+import { loadVolume, saveVolume } from '@/services/StorageService';
+
+import { Stepper } from './Stepper';
+
+const VolumeControl: React.FC = () => {
   const [volume, setVolume] = useState<number>(1.0);
 
   useEffect(() => {
-    loadVolume().then(setVolume);
+    void loadVolume().then(setVolume);
   }, []);
 
   const handleVolumeChange = async (newValue: number) => {
@@ -18,13 +20,13 @@ export const VolumeControl: React.FC = () => {
   return (
     <View style={styles.container}>
       <Stepper
-        label="Громкость"
-        value={volume}
-        min={0.0}
+        formatValue={(val) => `${String(Math.round(val * 100))}%`}
+        label='Громкость'
         max={1.0}
+        min={0.0}
+        onChange={(value) => void handleVolumeChange(value)}
         step={0.1}
-        onChange={handleVolumeChange}
-        formatValue={(val) => `${Math.round(val * 100)}%`}
+        value={volume}
       />
     </View>
   );
@@ -32,13 +34,15 @@ export const VolumeControl: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 16,
-    paddingVertical: 5,
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     elevation: 2,
-    shadowColor: "#000",
+    paddingHorizontal: 16,
+    paddingVertical: 5,
+    shadowColor: '#000000',
     shadowOpacity: 0.05,
     shadowRadius: 8,
   },
 });
+
+export { VolumeControl };

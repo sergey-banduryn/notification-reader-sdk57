@@ -38,8 +38,20 @@
     "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/react": "~19.2.2",
-    "typescript": "~6.0.3"
+    "concurrently": "^10.0.7",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~57.0.2",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-perfectionist": "^5.13.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "^3.10.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.2"
   },
   "scripts": {
     "start": "expo start",
@@ -47,7 +59,12 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint:js": "expo lint",
+    "_prettier": "prettier \"**/*.{js,ts,tsx,json,md,css,html}\"",
+    "format": "npm run _prettier -- --write",
+    "lint:format": "npm run _prettier -- --check",
+    "lint:type": "tsc --build --noEmit",
+    "lint": "concurrently \"npm:lint:*\""
   },
   "overrides": {
     "react-native-android-notification-listener": {

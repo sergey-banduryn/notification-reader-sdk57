@@ -1,59 +1,59 @@
-import { Tabs } from "expo-router";
-import { BottomTabBarButtonProps } from "expo-router/build/react-navigation/bottom-tabs";
-import { Text, Pressable, BackHandler, ColorValue } from "react-native";
+import { Tabs } from 'expo-router';
+import type { BottomTabBarButtonProps } from 'expo-router/build/react-navigation/bottom-tabs';
+import { BackHandler, type ColorValue, Pressable, Text } from 'react-native';
 
-export default function RootLayout() {
+function RootLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#007AFF",
-        tabBarStyle: {
-          backgroundColor: "#9797BB",
-          elevation: 0,
-          borderTopWidth: 1,
-          borderTopColor: "rgba(255, 255, 255, 0.2)",
-          height: 105,
-        },
+        sceneStyle: { backgroundColor: '#9797BB' },
+        tabBarActiveTintColor: '#007AFF',
+        tabBarButton: (props) => <TabBarButton {...props} />,
         tabBarLabelStyle: {
           fontSize: 12,
         },
-        sceneStyle: { backgroundColor: "#9797BB" },
-        tabBarButton: (props) => <TabBarButton {...props} />,
+        tabBarStyle: {
+          backgroundColor: '#9797BB',
+          borderTopColor: 'rgba(255, 255, 255, 0.2)',
+          borderTopWidth: 1,
+          elevation: 0,
+          height: 105,
+        },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
-          title: "Настройки",
-          tabBarIcon: getTabBarIcon("Н"),
+          tabBarIcon: getTabBarIcon('Н'),
+          title: 'Настройки',
         }}
       />
       <Tabs.Screen
-        name="logs"
+        name='logs'
         options={{
-          title: "Логи",
-          tabBarIcon: getTabBarIcon("Л"),
+          tabBarIcon: getTabBarIcon('Л'),
+          title: 'Логи',
         }}
       />
       <Tabs.Screen
-        name="test"
+        name='test'
         options={{
-          title: "Тест",
-          tabBarIcon: getTabBarIcon("Т"),
+          tabBarIcon: getTabBarIcon('Т'),
+          title: 'Тест',
         }}
       />
       <Tabs.Screen
-        name="exit"
-        options={{
-          title: "Выход",
-          tabBarIcon: getTabBarIcon("В"),
-        }}
         listeners={{
           tabPress: (e) => {
             e.preventDefault();
             BackHandler.exitApp();
           },
+        }}
+        name='exit'
+        options={{
+          tabBarIcon: getTabBarIcon('В'),
+          title: 'Выход',
         }}
       />
     </Tabs>
@@ -62,6 +62,7 @@ export default function RootLayout() {
 
 const TabBarButton = (props: BottomTabBarButtonProps) => {
   const { ref, ...restProps } = props;
+
   return (
     <Pressable
       {...restProps}
@@ -72,16 +73,20 @@ const TabBarButton = (props: BottomTabBarButtonProps) => {
 };
 
 const getTabBarIcon = (text: string) => {
-  return ({ color, size }: { color: ColorValue; size: number }) => (
+  const TabBarIcon = ({ color, size }: { color: ColorValue; size: number }) => (
     <Text
       style={{
         color,
         fontSize: size,
-        fontWeight: "bold",
+        fontWeight: 'bold',
         lineHeight: size,
       }}
     >
       {text}
     </Text>
   );
+
+  return TabBarIcon;
 };
+
+export default RootLayout;

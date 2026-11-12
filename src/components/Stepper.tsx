@@ -1,24 +1,24 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-interface StepperProps {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  onChange: (value: number) => void;
+type StepperProps = {
   formatValue?: (value: number) => string;
-}
+  label: string;
+  max: number;
+  min: number;
+  onChange: (value: number) => void;
+  step: number;
+  value: number;
+};
 
-export const Stepper: React.FC<StepperProps> = ({
-  label,
-  value,
-  min,
-  max,
-  step,
-  onChange,
+const Stepper: React.FC<StepperProps> = ({
   formatValue,
+  label,
+  max,
+  min,
+  onChange,
+  step,
+  value,
 }) => {
   const handleDecrement = () => {
     const newValue = Math.max(min, Number((value - step).toFixed(2)));
@@ -38,10 +38,10 @@ export const Stepper: React.FC<StepperProps> = ({
         {label}: <Text style={styles.valueText}>{displayValue}</Text>
       </Text>
       <View style={styles.controls}>
-        <TouchableOpacity style={styles.button} onPress={handleDecrement}>
+        <TouchableOpacity onPress={handleDecrement} style={styles.button}>
           <Text style={styles.buttonText}>−</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleIncrement}>
+        <TouchableOpacity onPress={handleIncrement} style={styles.button}>
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
@@ -50,34 +50,36 @@ export const Stepper: React.FC<StepperProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 6,
-  },
-  label: {
-    fontSize: 16,
-    color: "#333",
-  },
-  valueText: {
-    fontWeight: "bold",
-  },
-  controls: {
-    flexDirection: "row",
-  },
   button: {
-    backgroundColor: "#007AFF",
-    width: 36,
-    height: 36,
+    alignItems: 'center',
+    backgroundColor: '#007AFF',
     borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
+    height: 36,
+    justifyContent: 'center',
     marginLeft: 8,
+    width: 36,
   },
   buttonText: {
-    color: "#fff",
+    color: '#FFFFFF',
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+  },
+  container: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 6,
+  },
+  controls: {
+    flexDirection: 'row',
+  },
+  label: {
+    color: '#333333',
+    fontSize: 16,
+  },
+  valueText: {
+    fontWeight: 'bold',
   },
 });
+
+export { Stepper };

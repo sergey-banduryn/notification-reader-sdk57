@@ -1,37 +1,40 @@
-import * as Speech from "expo-speech";
-import { setAudioModeAsync } from "expo-audio";
-import { loadVolume } from "@/services/StorageService";
-import { logNotification, logError } from "@/services/LoggerService";
-import Constants from "expo-constants";
+import { setAudioModeAsync } from 'expo-audio';
+import Constants from 'expo-constants';
+import * as Speech from 'expo-speech';
+
+import { logError, logNotification } from '@/services/LoggerService';
+import { loadVolume } from '@/services/StorageService';
 
 const APP_PACKAGE_NAME = Constants.expoConfig?.android?.package;
 
-interface NotificationData {
+type NotificationData = {
   app?: string;
-  title?: string;
-  text?: string;
-  icon?: string;
-  iconLarge?: string;
   groupedMessages?: {
     text?: string;
     title?: string;
   }[];
-}
+  icon?: string;
+  iconLarge?: string;
+  text?: string;
+  title?: string;
+};
 
-interface NotificationEvent {
+type NotificationEvent = {
   notification?: string;
-}
+};
 
-export const processNotification = async ({
+const processNotification = async ({
   notification,
 }: NotificationEvent): Promise<void> => {
-  if (!notification) return;
+  if (!notification) {
+    return;
+  }
 
   const { icon, iconLarge, ...loggedNotification } = JSON.parse(
     notification,
   ) as NotificationData;
 
-  logNotification(loggedNotification);
+  void logNotification(loggedNotification);
 
   const volume = await loadVolume();
 
@@ -39,54 +42,57 @@ export const processNotification = async ({
     const data = loggedNotification;
 
     if (
-      (data.app === "com.whatsapp" ||
-        data.app === "com.android.shell" ||
+      (data.app === 'com.whatsapp' ||
+        data.app === 'com.android.shell' ||
         data.app === APP_PACKAGE_NAME) &&
-      data.title?.includes("Цехи")
+      data.title?.includes('Цехи')
     ) {
-      const text: string = data.text || "";
-      let textToSpeak: string = `${text}`.trim();
+      const text: string = data.text ?? '';
+      let textToSpeak: string = text.trim();
 
       const { groupedMessages } = data;
+
       if (groupedMessages && groupedMessages.length !== 0) {
         const lastMessage = groupedMessages[groupedMessages.length - 1];
-        textToSpeak = lastMessage.text || "";
+        textToSpeak = lastMessage.text ?? '';
       }
 
-      textToSpeak = textToSpeak.replace("Імпульс Диспетчер", "");
+      textToSpeak = textToSpeak.replace('Імпульс Диспетчер', '');
 
       if (textToSpeak) {
         await setAudioModeAsync({
-          playsInSilentMode: true,
           allowsRecording: false,
-          interruptionMode: "duckOthers",
+          interruptionMode: 'duckOthers',
+          playsInSilentMode: true,
         });
 
-        Speech.stop();
+        void Speech.stop();
         Speech.speak(textToSpeak, {
-          language: "uk-UA",
-          voice: "uk-ua-x-hfd-local",
-          volume,
+          language: 'uk-UA',
           onError: (error) => {
-            logError("processNotification.Speech", error);
+            void logError('processNotification.Speech', error);
           },
+          voice: 'uk-ua-x-hfd-local',
+          volume,
         });
       }
     }
   } catch (error) {
-    await logError("processNotification", error);
+    await logError('processNotification', error);
 
     await setAudioModeAsync({
-      playsInSilentMode: true,
       allowsRecording: false,
-      interruptionMode: "duckOthers",
+      interruptionMode: 'duckOthers',
+      playsInSilentMode: true,
     });
 
-    Speech.stop();
-    Speech.speak("Ошибка при обработке фонового уведомления", {
-      language: "ru-RU",
-      voice: "ru-ru-x-ruf-local",
+    void Speech.stop();
+    Speech.speak('Ошибка при обработке фонового уведомления', {
+      language: 'ru-RU',
+      voice: 'ru-ru-x-ruf-local',
       volume,
     });
   }
 };
+
+export { processNotification };

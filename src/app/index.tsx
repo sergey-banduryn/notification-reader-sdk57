@@ -1,15 +1,16 @@
-import { StyleSheet, Text, ScrollView, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { VolumeControl } from "@/components/VolumeControl";
-import { Permissions } from "@/components/Permissions";
-import { useAppManager } from "@/hooks/useAppManager";
-import { ForegroundServiceControl } from "@/components/ForegroundServiceControl";
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function HomeScreen() {
+import { ForegroundServiceControl } from '@/components/ForegroundServiceControl';
+import { Permissions } from '@/components/Permissions';
+import { VolumeControl } from '@/components/VolumeControl';
+import { useAppManager } from '@/hooks/useAppManager';
+
+function HomeScreen() {
   const { permissions } = useAppManager();
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <SafeAreaView edges={['top']} style={styles.container}>
       <ScrollView>
         <Permissions {...{ permissions }} />
         <Text style={styles.title}>Настройки</Text>
@@ -31,10 +32,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   title: {
+    color: '#1A1A1A',
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#1A1A1A",
-    textAlign: "center",
+    fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
   },
 });
+
+export default HomeScreen;

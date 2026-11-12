@@ -1,42 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+  View,
+} from 'react-native';
+
 import {
-  getNotificationLogs,
-  getErrorLogs,
   clearAllLogs,
-} from "@/services/LoggerService";
+  getErrorLogs,
+  getNotificationLogs,
+} from '@/services/LoggerService';
 
-export const LogViewer: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"notifications" | "errors">(
-    "notifications",
-  );
-  const [logText, setLogText] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+type TabType = 'errors' | 'notifications';
 
-  const fetchLogs = async () => {
+const fetchLogs = (tab: TabType): Promise<string> =>
+  tab === 'notifications' ? getNotificationLogs() : getErrorLogs();
+
+const LogViewer: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<TabType>('notifications');
+  const [logText, setLogText] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    void fetchLogs(activeTab).then((content) => {
+      setLogText(content);
+      setLoading(false);
+    });
+  }, [activeTab]);
+
+  const handleTabPress = (tab: TabType) => {
+    if (tab === activeTab) {
+      return;
+    }
+
     setLoading(true);
-    const content =
-      activeTab === "notifications"
-        ? await getNotificationLogs()
-        : await getErrorLogs();
+    setActiveTab(tab);
+  };
+
+  const handleRefresh = async () => {
+    setLoading(true);
+    const content = await fetchLogs(activeTab);
     setLogText(content);
     setLoading(false);
   };
 
-  useEffect(() => {
-    fetchLogs();
-  }, [activeTab]);
-
   const handleClear = async () => {
+    setLoading(true);
     await clearAllLogs();
-    await fetchLogs();
+    await handleRefresh();
   };
 
   return (
@@ -44,29 +58,40 @@ export const LogViewer: React.FC = () => {
       <Text style={styles.title}>Логи</Text>
       <View style={styles.tabContainer}>
         <TouchableOpacity
+          onPress={() => {
+            handleTabPress('notifications');
+          }}
           style={[
             styles.tab,
-            activeTab === "notifications" && styles.activeTab,
+            activeTab === 'notifications' && styles.activeTab,
           ]}
-          onPress={() => setActiveTab("notifications")}
         >
           <Text style={styles.tabText}>Уведомления</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tab, activeTab === "errors" && styles.activeTab]}
-          onPress={() => setActiveTab("errors")}
+          onPress={() => {
+            handleTabPress('errors');
+          }}
+          style={[styles.tab, activeTab === 'errors' && styles.activeTab]}
         >
           <Text style={styles.tabText}>Ошибки</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.button} onPress={fetchLogs}>
+        <TouchableOpacity
+          onPress={() => {
+            void handleRefresh();
+          }}
+          style={styles.button}
+        >
           <Text style={styles.buttonText}>Обновить</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: "#FF3B30" }]}
-          onPress={handleClear}
+          onPress={() => {
+            void handleClear();
+          }}
+          style={[styles.button, { backgroundColor: '#FF3B30' }]}
         >
           <Text style={styles.buttonText}>Очистить логи</Text>
         </TouchableOpacity>
@@ -74,8 +99,8 @@ export const LogViewer: React.FC = () => {
 
       {loading ? (
         <ActivityIndicator
-          size="large"
-          color="#007AFF"
+          color='#007AFF'
+          size='large'
           style={{ marginTop: 20 }}
         />
       ) : (
@@ -90,58 +115,60 @@ export const LogViewer: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  activeTab: {
+    backgroundColor: '#007AFF',
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#34C759',
+    borderRadius: 6,
+    flex: 0.48,
+    padding: 8,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
   container: {
     flex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
-  },
-  tabContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  tab: {
-    flex: 0.48,
-    padding: 8,
-    backgroundColor: "#e0e0e0",
-    alignItems: "center",
-    borderRadius: 4,
-  },
-  activeTab: {
-    backgroundColor: "#007AFF",
-  },
-  tabText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-  actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  button: {
-    backgroundColor: "#34C759",
-    padding: 8,
-    borderRadius: 6,
-    flex: 0.48,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
   logBox: {
-    backgroundColor: "#1e1e1e",
+    backgroundColor: '#1E1E1E',
     borderRadius: 6,
     padding: 10,
   },
   logText: {
-    color: "#00ff00",
+    color: '#00FF00',
+    fontFamily: 'monospace',
     fontSize: 12,
-    fontFamily: "monospace",
+  },
+  tab: {
+    alignItems: 'center',
+    backgroundColor: '#E0E0E0',
+    borderRadius: 4,
+    flex: 0.48,
+    padding: 8,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  tabText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
   },
 });
+
+export { LogViewer };

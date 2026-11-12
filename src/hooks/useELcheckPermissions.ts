@@ -1,15 +1,15 @@
-import { useEffect } from "react";
-import { AppState, AppStateStatus } from "react-native";
+import { useEffect } from 'react';
+import { AppState, type AppStateStatus } from 'react-native';
 
-export function useELcheckPermissions(checkPermissions: () => void) {
+const useELcheckPermissions = (checkPermissions: () => Promise<void>) => {
   useEffect(() => {
-    checkPermissions();
+    void checkPermissions();
 
     const subscription = AppState.addEventListener(
-      "change",
+      'change',
       (nextAppState: AppStateStatus) => {
-        if (nextAppState === "active") {
-          checkPermissions();
+        if (nextAppState === 'active') {
+          void checkPermissions();
         }
       },
     );
@@ -18,4 +18,6 @@ export function useELcheckPermissions(checkPermissions: () => void) {
       subscription.remove();
     };
   }, [checkPermissions]);
-}
+};
+
+export { useELcheckPermissions };

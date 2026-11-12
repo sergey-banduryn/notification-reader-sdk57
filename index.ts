@@ -1,7 +1,8 @@
-import "expo-router/entry";
-import { AppRegistry, Platform } from "react-native";
-import notifee from "@notifee/react-native";
-import { processNotification } from "@/services/NotificationService";
+import notifee from '@notifee/react-native';
+import 'expo-router/entry';
+import { AppRegistry, Platform } from 'react-native';
+
+import { processNotification } from '@/services/NotificationService';
 
 notifee.registerForegroundService(() => {
   return new Promise(() => {
@@ -10,10 +11,10 @@ notifee.registerForegroundService(() => {
 });
 
 // Выполняем регистрацию Headless Task только на платформе Android
-if (Platform.OS === "android") {
+if (Platform.OS === 'android') {
   const {
     RNAndroidNotificationListenerHeadlessJsName,
-  } = require("react-native-android-notification-listener");
+  } = require('react-native-android-notification-listener');
 
   AppRegistry.registerHeadlessTask(
     RNAndroidNotificationListenerHeadlessJsName,

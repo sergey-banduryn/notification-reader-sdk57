@@ -1,11 +1,12 @@
-import React from "react";
-import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { LogViewer } from "@/components/LogViewer";
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function LogsScreen(): React.JSX.Element {
+import { LogViewer } from '@/components/LogViewer';
+
+function LogsScreen(): React.JSX.Element {
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <SafeAreaView edges={['top']} style={styles.container}>
       <LogViewer />
     </SafeAreaView>
   );
@@ -17,3 +18,5 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+export default LogsScreen;

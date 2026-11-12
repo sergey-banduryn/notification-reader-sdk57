@@ -1,7 +1,7 @@
-import { useELcheckPermissions } from "./useELcheckPermissions";
-import { usePermissions } from "./usePermissions";
+import { useELcheckPermissions } from './useELcheckPermissions';
+import { usePermissions } from './usePermissions';
 
-export const useAppManager = () => {
+const useAppManager = () => {
   const permissions = usePermissions();
   const { checkPermissions } = permissions;
 
@@ -9,3 +9,5 @@ export const useAppManager = () => {
 
   return { permissions };
 };
+
+export { useAppManager };

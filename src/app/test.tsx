@@ -1,11 +1,12 @@
-import { NotificationTester2 } from "@/components/NotificationTester2";
-import React from "react";
-import { StyleSheet, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React from 'react';
+import { StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function TestScreen(): React.JSX.Element {
+import { NotificationTester2 } from '@/components/NotificationTester2';
+
+function TestScreen(): React.JSX.Element {
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <SafeAreaView edges={['top']} style={styles.container}>
       <Text style={styles.title}>Тест</Text>
       <NotificationTester2 />
     </SafeAreaView>
@@ -18,10 +19,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
+    color: '#1A1A1A',
     fontSize: 24,
-    fontWeight: "bold",
-    color: "#1A1A1A",
-    textAlign: "center",
+    fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
   },
 });
+
+export default TestScreen;

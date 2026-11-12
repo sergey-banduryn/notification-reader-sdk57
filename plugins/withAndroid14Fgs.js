@@ -1,4 +1,4 @@
-const { withAndroidManifest } = require("@expo/config-plugins");
+const { withAndroidManifest } = require('@expo/config-plugins');
 
 module.exports = function withAndroid14Fgs(config) {
   return withAndroidManifest(config, (config) => {
@@ -13,15 +13,15 @@ module.exports = function withAndroid14Fgs(config) {
 
       application.service.push({
         $: {
-          "android:name": "app.notifee.core.ForegroundService",
-          "android:foregroundServiceType": "specialUse",
+          'android:name': 'app.notifee.core.ForegroundService',
+          'android:foregroundServiceType': 'specialUse',
         },
         property: [
           {
             $: {
-              "android:name": "android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE",
-              "android:value":
-                "Notification reading and text to speech background service",
+              'android:name': 'android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE',
+              'android:value':
+                'Notification reading and text to speech background service',
             },
           },
         ],

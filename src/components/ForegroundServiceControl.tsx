@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Switch, StyleSheet } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Switch, Text, View } from 'react-native';
+
 import {
   isForegroundServiceRunning,
   startForegroundService,
   stopForegroundService,
-} from "@/services/ForegroundService";
+} from '@/services/ForegroundService';
 
 type Permissions = {
+  checkPermissions: () => Promise<void>;
+  isBatteryOptEnabled: boolean;
   isListenerGranted: boolean;
   isNotifeeGranted: boolean;
-  isBatteryOptEnabled: boolean;
-  checkPermissions: () => Promise<void>;
 };
 
-export const ForegroundServiceControl: React.FC<{
+const ForegroundServiceControl: React.FC<{
   permissions: Permissions;
 }> = ({ permissions }) => {
   const { isNotifeeGranted } = permissions;
@@ -21,7 +22,9 @@ export const ForegroundServiceControl: React.FC<{
   const [isRunning, setIsRunning] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
-  const toggleSwitch = () => setIsPinned((prev) => !prev);
+  const toggleSwitch = () => {
+    setIsPinned((prev) => !prev);
+  };
 
   const isAllGranted = isNotifeeGranted && isPinned;
 
@@ -29,7 +32,7 @@ export const ForegroundServiceControl: React.FC<{
   useEffect(() => {
     let isMounted = true;
 
-    isForegroundServiceRunning().then((running) => {
+    void isForegroundServiceRunning().then((running) => {
       if (isMounted) {
         setIsRunning(running);
         setIsPinned(running);
@@ -44,12 +47,18 @@ export const ForegroundServiceControl: React.FC<{
 
   // 2. Управление сервисом ПОСЛЕ завершения первичного анализа
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady) {
+      return;
+    }
 
     if (isAllGranted && !isRunning) {
-      startForegroundService().then(() => setIsRunning(true));
+      void startForegroundService().then(() => {
+        setIsRunning(true);
+      });
     } else if (!isPinned && isRunning) {
-      stopForegroundService().then(() => setIsRunning(false));
+      void stopForegroundService().then(() => {
+        setIsRunning(false);
+      });
     }
   }, [isAllGranted, isReady, isRunning, isPinned]);
 
@@ -58,11 +67,11 @@ export const ForegroundServiceControl: React.FC<{
       <Text style={styles.label}>Закрепить уведомление:</Text>
       <Switch
         disabled={!isNotifeeGranted && !isPinned}
-        trackColor={{ false: "#767577", true: "#4ba3e3" }}
-        thumbColor={isPinned ? "#ffffff" : "#f4f3f4"}
         onValueChange={toggleSwitch}
-        value={isPinned}
         style={styles.switch}
+        thumbColor={isPinned ? '#FFFFFF' : '#F4F3F4'}
+        trackColor={{ false: '#767577', true: '#4BA3E3' }}
+        value={isPinned}
       />
     </View>
   );
@@ -70,15 +79,14 @@ export const ForegroundServiceControl: React.FC<{
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-    padding: 16,
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     elevation: 2,
-    shadowColor: "#000",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+    shadowColor: '#000000',
     shadowOpacity: 0.05,
     shadowRadius: 8,
   },
@@ -88,3 +96,5 @@ const styles = StyleSheet.create({
   },
   switch: { transform: [{ scale: 1.5 }] },
 });
+
+export { ForegroundServiceControl };

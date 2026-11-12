@@ -1,8 +1,10 @@
-import { useState, useCallback } from "react";
-import notifee, { AuthorizationStatus } from "@notifee/react-native";
-import RNAndroidNotificationListener from "react-native-android-notification-listener";
+import notifee, { AuthorizationStatus } from '@notifee/react-native';
+import { useCallback, useState } from 'react';
+import RNAndroidNotificationListener from 'react-native-android-notification-listener';
 
-export const usePermissions = () => {
+import { logError } from '@/services/LoggerService';
+
+const usePermissions = () => {
   const [isListenerGranted, setIsListenerGranted] = useState<boolean>(false);
   const [isNotifeeGranted, setIsNotifeeGranted] = useState<boolean>(false);
   const [isBatteryOptEnabled, setIsBatteryOptEnabled] =
@@ -12,7 +14,7 @@ export const usePermissions = () => {
     try {
       const listenerStatus =
         await RNAndroidNotificationListener.getPermissionStatus();
-      setIsListenerGranted(listenerStatus === "authorized");
+      setIsListenerGranted(listenerStatus === 'authorized');
 
       const settings = await notifee.getNotificationSettings();
       const notifeeAuthorized =
@@ -23,14 +25,16 @@ export const usePermissions = () => {
       const batteryStatus = await notifee.isBatteryOptimizationEnabled();
       setIsBatteryOptEnabled(batteryStatus);
     } catch (error) {
-      console.error("Ошибка при проверке разрешений:", error);
+      void logError('checkPermissions', error);
     }
   }, []);
 
   return {
+    checkPermissions,
+    isBatteryOptEnabled,
     isListenerGranted,
     isNotifeeGranted,
-    isBatteryOptEnabled,
-    checkPermissions,
   };
 };
+
+export { usePermissions };
