@@ -2,13 +2,13 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { NotificationTester2 } from '@/components/NotificationTester2';
+import { LanguageTester } from '@/components/LanguageTester';
 
 function TestScreen(): React.JSX.Element {
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
       <Text style={styles.title}>Тест</Text>
-      <NotificationTester2 />
+      <LanguageTester />
     </SafeAreaView>
   );
 }

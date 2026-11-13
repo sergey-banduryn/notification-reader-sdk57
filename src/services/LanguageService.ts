@@ -55,4 +55,4 @@ const getSpeechConfigByText = async (text: string): Promise<SpeechConfig> => {
   return UKRAINIAN_CONFIG;
 };
 
-export { getSpeechConfigByText };
+export { getSpeechConfigByText, type SpeechConfig };
