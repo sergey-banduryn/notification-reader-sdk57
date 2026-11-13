@@ -5,6 +5,8 @@ import * as Speech from 'expo-speech';
 import { logError, logNotification } from '@/services/LoggerService';
 import { loadVolume } from '@/services/StorageService';
 
+import { getSpeechConfigByText } from './LanguageService';
+
 const APP_PACKAGE_NAME = Constants.expoConfig?.android?.package;
 
 type NotificationData = {
@@ -60,6 +62,8 @@ const processNotification = async ({
       textToSpeak = textToSpeak.replace('Імпульс Диспетчер', '');
 
       if (textToSpeak) {
+        const speechConfig = await getSpeechConfigByText(textToSpeak);
+
         await setAudioModeAsync({
           allowsRecording: false,
           interruptionMode: 'duckOthers',
@@ -68,30 +72,17 @@ const processNotification = async ({
 
         void Speech.stop();
         Speech.speak(textToSpeak, {
-          language: 'uk-UA',
+          language: speechConfig.language,
           onError: (error) => {
             void logError('processNotification.Speech', error);
           },
-          voice: 'uk-ua-x-hfd-local',
+          voice: speechConfig.voice,
           volume,
         });
       }
     }
   } catch (error) {
     await logError('processNotification', error);
-
-    await setAudioModeAsync({
-      allowsRecording: false,
-      interruptionMode: 'duckOthers',
-      playsInSilentMode: true,
-    });
-
-    void Speech.stop();
-    Speech.speak('Ошибка при обработке фонового уведомления', {
-      language: 'ru-RU',
-      voice: 'ru-ru-x-ruf-local',
-      volume,
-    });
   }
 };
 
