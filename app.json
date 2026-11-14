@@ -51,6 +51,7 @@
       ],
       "./plugins/withAllowBackup",
       "./plugins/withAndroid14Fgs",
+      "./plugins/withTtsQueries",
       "expo-audio"
     ],
     "experiments": {
