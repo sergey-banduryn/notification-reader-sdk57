@@ -1,11 +1,7 @@
-import { setAudioModeAsync } from 'expo-audio';
 import Constants from 'expo-constants';
-import * as Speech from 'expo-speech';
 
 import { logError, logNotification } from '@/services/LoggerService';
-import { loadVolume } from '@/services/StorageService';
-
-import { getSpeechConfigByText } from './LanguageService';
+import { speechQueueService } from '@/services/SpeechQueueService';
 
 const APP_PACKAGE_NAME = Constants.expoConfig?.android?.package;
 
@@ -38,8 +34,6 @@ const processNotification = async ({
 
   void logNotification(loggedNotification);
 
-  const volume = await loadVolume();
-
   try {
     const data = loggedNotification;
 
@@ -62,23 +56,7 @@ const processNotification = async ({
       textToSpeak = textToSpeak.replace('Імпульс Диспетчер', '');
 
       if (textToSpeak) {
-        const speechConfig = await getSpeechConfigByText(textToSpeak);
-
-        await setAudioModeAsync({
-          allowsRecording: false,
-          interruptionMode: 'duckOthers',
-          playsInSilentMode: true,
-        });
-
-        void Speech.stop();
-        Speech.speak(textToSpeak, {
-          language: speechConfig.language,
-          onError: (error) => {
-            void logError('processNotification.Speech', error);
-          },
-          voice: speechConfig.voice,
-          volume,
-        });
+        speechQueueService.enqueue(textToSpeak);
       }
     }
   } catch (error) {
