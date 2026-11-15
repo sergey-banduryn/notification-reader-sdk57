@@ -10,11 +10,26 @@ import {
   saveInitialSystemVolume,
 } from '@/services/StorageService';
 
+const DUPLICATE_TIMEOUT_MS = 5000;
+
 class SpeechQueueService {
   private isSpeaking = false;
+  private lastEnqueuedAt = 0;
+  private lastText = '';
   private queue: string[] = [];
 
   public enqueue(text: string): void {
+    const now = Date.now();
+
+    if (
+      text === this.lastText &&
+      now - this.lastEnqueuedAt < DUPLICATE_TIMEOUT_MS
+    ) {
+      return;
+    }
+
+    this.lastText = text;
+    this.lastEnqueuedAt = now;
     this.queue.push(text);
 
     if (!this.isSpeaking) {
