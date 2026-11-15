@@ -4,6 +4,7 @@ import { logError } from './LoggerService';
 
 const VOLUME_KEY = '@tts_volume_level';
 const INITIAL_SYSTEM_VOLUME_KEY = '@initial_system_volume';
+const MUTE_KEY = 'app_speech_muted';
 
 const saveVolume = async (value: number): Promise<void> => {
   try {
@@ -49,9 +50,21 @@ const loadInitialSystemVolume = async (): Promise<null | number> => {
   }
 };
 
+const loadMuted = async (): Promise<boolean> => {
+  const value = await AsyncStorage.getItem(MUTE_KEY);
+
+  return value === 'true';
+};
+
+const saveMuted = async (isMuted: boolean): Promise<void> => {
+  await AsyncStorage.setItem(MUTE_KEY, String(isMuted));
+};
+
 export {
   loadInitialSystemVolume,
+  loadMuted,
   loadVolume,
   saveInitialSystemVolume,
+  saveMuted,
   saveVolume,
 };

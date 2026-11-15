@@ -6,6 +6,7 @@ import { getSpeechConfigByText } from '@/services/LanguageService';
 import { logError } from '@/services/LoggerService';
 import {
   loadInitialSystemVolume,
+  loadMuted,
   loadVolume,
   saveInitialSystemVolume,
 } from '@/services/StorageService';
@@ -102,6 +103,15 @@ class SpeechQueueService {
   }
 
   private async startQueue(): Promise<void> {
+    const isMuted = await loadMuted();
+
+    if (isMuted) {
+      this.queue = [];
+      this.isSpeaking = false;
+
+      return;
+    }
+
     await this.restoreSystemVolume();
 
     try {
