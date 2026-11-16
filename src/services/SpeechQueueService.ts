@@ -11,27 +11,25 @@ import {
   saveInitialSystemVolume,
 } from '@/services/StorageService';
 
-const DUPLICATE_TIMEOUT_MS = 5000;
-
 class SpeechQueueService {
   private isSpeaking = false;
-  private lastEnqueuedAt = 0;
-  private lastText = '';
+  private lastMessageBySource = new Map<string, string>();
   private queue: string[] = [];
 
-  public enqueue(text: string): void {
-    const now = Date.now();
+  public enqueue(text: string, sourceKey = 'default'): void {
+    const cleanText = text.trim();
+    const normalizedText = cleanText.toLowerCase();
 
-    if (
-      text === this.lastText &&
-      now - this.lastEnqueuedAt < DUPLICATE_TIMEOUT_MS
-    ) {
+    if (!normalizedText) {
       return;
     }
 
-    this.lastText = text;
-    this.lastEnqueuedAt = now;
-    this.queue.push(text);
+    if (this.lastMessageBySource.get(sourceKey) === normalizedText) {
+      return;
+    }
+
+    this.lastMessageBySource.set(sourceKey, normalizedText);
+    this.queue.push(cleanText);
 
     if (!this.isSpeaking) {
       this.isSpeaking = true;

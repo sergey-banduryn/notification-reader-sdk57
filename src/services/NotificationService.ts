@@ -53,10 +53,13 @@ const processNotification = async ({
         textToSpeak = lastMessage.text ?? '';
       }
 
-      textToSpeak = textToSpeak.replace('Імпульс Диспетчер', '');
+      textToSpeak = textToSpeak.replace(/^[^:]{1,50}:\s*/, '').trim();
+
+      const app = data.app ?? 'unknown';
+      const title = (data.title ?? '').split(':')[0].trim().toLowerCase();
 
       if (textToSpeak) {
-        speechQueueService.enqueue(textToSpeak);
+        speechQueueService.enqueue(textToSpeak, `${app}::${title}`);
       }
     }
   } catch (error) {
