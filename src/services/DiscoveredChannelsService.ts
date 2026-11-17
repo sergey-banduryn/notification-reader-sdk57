@@ -13,8 +13,18 @@ type DiscoveredIndexMap = Partial<Record<string, string[]>>;
 class DiscoveredChannelsService {
   private indexCache: DiscoveredIndexMap | null = null;
 
-  public async getDiscoveredApps(): Promise<DiscoveredApp[]> {
-    const index = await this.getDiscoveredIndex();
+  public async clearDiscoveredIndex(): Promise<void> {
+    this.indexCache = {};
+
+    if (await FileSystem.exists(INDEX_PATH)) {
+      await FileSystem.unlink(INDEX_PATH);
+    }
+  }
+
+  public async getDiscoveredApps(
+    forceRefresh = false,
+  ): Promise<DiscoveredApp[]> {
+    const index = await this.getDiscoveredIndex(forceRefresh);
 
     return Object.entries(index)
       .map(([app, titles = []]) => ({
@@ -24,8 +34,10 @@ class DiscoveredChannelsService {
       .sort((a, b) => a.app.localeCompare(b.app));
   }
 
-  public async getDiscoveredIndex(): Promise<DiscoveredIndexMap> {
-    if (this.indexCache) {
+  public async getDiscoveredIndex(
+    forceRefresh = false,
+  ): Promise<DiscoveredIndexMap> {
+    if (this.indexCache && !forceRefresh) {
       return this.indexCache;
     }
 

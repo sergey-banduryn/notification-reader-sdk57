@@ -15,6 +15,7 @@ type SpeechRuleCardProps = {
   app: string;
   availableChannels: string[];
   onAddChannel: (app: string, channel: string) => Promise<void>;
+  onRefreshDiscovered: () => Promise<void>;
   onRemoveApp: (app: string) => Promise<void>;
   onRemoveChannel: (app: string, channel: string) => Promise<void>;
   onToggleApp: (app: string, enabled: boolean) => void;
@@ -26,6 +27,7 @@ const SpeechRuleCard: React.FC<SpeechRuleCardProps> = ({
   app,
   availableChannels,
   onAddChannel,
+  onRefreshDiscovered,
   onRemoveApp,
   onRemoveChannel,
   onToggleApp,
@@ -106,27 +108,34 @@ const SpeechRuleCard: React.FC<SpeechRuleCardProps> = ({
                 style={styles.channelsCollapsible}
                 title='Добавить каналы'
               >
+                <View style={styles.subHeaderRow}>
+                  <Text style={styles.subTitleNoMargin}>Доступные:</Text>
+                  <TouchableOpacity
+                    onPress={() => void onRefreshDiscovered()}
+                    style={styles.refreshBtn}
+                  >
+                    <Text style={styles.refreshBtnText}>Обновить</Text>
+                  </TouchableOpacity>
+                </View>
+
                 {availableChannels.length > 0 && (
-                  <>
-                    <Text style={styles.subTitleNoMargin}>Доступные:</Text>
-                    <View style={styles.chipsContainer}>
-                      {availableChannels.map((channel) => (
-                        <TouchableOpacity
-                          key={channel}
-                          onPress={() => void onAddChannel(app, channel)}
-                          style={styles.chip}
-                        >
-                          <Text style={styles.chipText}>{channel}</Text>
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  </>
+                  <View style={styles.chipsContainer}>
+                    {availableChannels.map((channel) => (
+                      <TouchableOpacity
+                        key={channel}
+                        onPress={() => void onAddChannel(app, channel)}
+                        style={styles.chip}
+                      >
+                        <Text style={styles.chipText}>{channel}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
                 )}
 
                 <View
                   style={[
                     styles.inputRow,
-                    availableChannels.length === 0 && styles.inputRowNoMargin,
+                    availableChannels.length === 0 && styles.inputRowCompact,
                   ]}
                 >
                   <TextInput
@@ -214,12 +223,29 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   inputRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  inputRowNoMargin: { marginTop: 0 },
+  inputRowCompact: { marginTop: 8 },
   label: { color: '#374151', fontSize: 14 },
+  refreshBtn: {
+    backgroundColor: '#E5E7EB',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  refreshBtnText: {
+    color: '#374151',
+    fontSize: 12,
+    fontWeight: '600',
+  },
   row: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  subHeaderRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
   },
   subSection: {
     borderTopColor: '#F3F4F6',
@@ -238,8 +264,6 @@ const styles = StyleSheet.create({
     color: '#4B5563',
     fontSize: 13,
     fontWeight: '600',
-    marginBottom: 8,
-    marginTop: 0,
   },
 });
 

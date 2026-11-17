@@ -13,11 +13,15 @@ import type { DiscoveredApp } from '@/services/DiscoveredChannelsService';
 type AddAppRuleSectionProps = {
   availableApps: DiscoveredApp[];
   onAddApp: (app: string) => Promise<void>;
+  onClearDiscovered: () => void;
+  onRefreshDiscovered: () => Promise<void>;
 };
 
 const AddAppRuleSection: React.FC<AddAppRuleSectionProps> = ({
   availableApps,
   onAddApp,
+  onClearDiscovered,
+  onRefreshDiscovered,
 }) => {
   const [newAppInput, setNewAppInput] = useState<string>('');
 
@@ -34,27 +38,34 @@ const AddAppRuleSection: React.FC<AddAppRuleSectionProps> = ({
 
   return (
     <CollapsibleSection style={styles.section} title='Добавить приложение'>
+      <View style={styles.subHeaderRow}>
+        <Text style={styles.subTitle}>Доступные приложения:</Text>
+        <TouchableOpacity
+          onPress={() => void onRefreshDiscovered()}
+          style={styles.refreshBtn}
+        >
+          <Text style={styles.refreshBtnText}>Обновить</Text>
+        </TouchableOpacity>
+      </View>
+
       {availableApps.length > 0 && (
-        <>
-          <Text style={styles.subTitle}>Доступные приложения:</Text>
-          <View style={styles.chipsContainer}>
-            {availableApps.map(({ app }) => (
-              <TouchableOpacity
-                key={app}
-                onPress={() => void onAddApp(app)}
-                style={styles.chip}
-              >
-                <Text style={styles.chipText}>{app}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </>
+        <View style={styles.chipsContainer}>
+          {availableApps.map(({ app }) => (
+            <TouchableOpacity
+              key={app}
+              onPress={() => void onAddApp(app)}
+              style={styles.chip}
+            >
+              <Text style={styles.chipText}>{app}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       )}
 
       <View
         style={[
           styles.inputRow,
-          availableApps.length === 0 && styles.inputRowNoMargin,
+          availableApps.length === 0 && styles.inputRowCompact,
         ]}
       >
         <TextInput
@@ -72,6 +83,15 @@ const AddAppRuleSection: React.FC<AddAppRuleSectionProps> = ({
           <Text style={styles.addBtnText}>Добавить</Text>
         </TouchableOpacity>
       </View>
+
+      <TouchableOpacity
+        onPress={() => {
+          onClearDiscovered();
+        }}
+        style={styles.clearAllBtn}
+      >
+        <Text style={styles.clearAllBtnText}>Удалить все</Text>
+      </TouchableOpacity>
     </CollapsibleSection>
   );
 };
@@ -92,6 +112,19 @@ const styles = StyleSheet.create({
   },
   chipsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chipText: { color: '#374151', fontSize: 13 },
+  clearAllBtn: {
+    alignItems: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#FEE2E2',
+    borderRadius: 8,
+    marginTop: 12,
+    padding: 8,
+  },
+  clearAllBtnText: {
+    color: '#DC2626',
+    fontSize: 13,
+    fontWeight: '600',
+  },
   input: {
     backgroundColor: '#FFFFFF',
     borderColor: '#D1D5DB',
@@ -103,13 +136,29 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   inputRow: { flexDirection: 'row', gap: 8, marginTop: 12 },
-  inputRowNoMargin: { marginTop: 0 },
+  inputRowCompact: { marginTop: 8 },
+  refreshBtn: {
+    backgroundColor: '#E5E7EB',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  refreshBtnText: {
+    color: '#374151',
+    fontSize: 12,
+    fontWeight: '600',
+  },
   section: { marginBottom: 16 },
+  subHeaderRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
   subTitle: {
     color: '#4B5563',
     fontSize: 13,
     fontWeight: '600',
-    marginBottom: 8,
   },
 });
 

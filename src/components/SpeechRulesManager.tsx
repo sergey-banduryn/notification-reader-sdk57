@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text } from 'react-native';
 
 import { AddAppRuleSection } from '@/components/AddAppRuleSection';
 import { SpeechRuleCard } from '@/components/SpeechRuleCard';
@@ -123,6 +123,25 @@ const SpeechRulesManager: React.FC = () => {
     await speechRulesService.removeChannelFromRule(app, channel);
   };
 
+  const handleRefreshDiscovered = async () => {
+    const freshApps = await discoveredChannelsService.getDiscoveredApps(true);
+    setDiscovered(freshApps);
+  };
+
+  const handleClearDiscovered = () => {
+    Alert.alert('', 'Удалить все доступные приложения и каналы?', [
+      { style: 'cancel', text: 'Отмена' },
+      {
+        onPress: () => {
+          setDiscovered([]);
+          void discoveredChannelsService.clearDiscoveredIndex();
+        },
+        style: 'destructive',
+        text: 'Удалить',
+      },
+    ]);
+  };
+
   const configuredAppIds = Object.keys(rules);
   const availableDiscoveredApps = discovered.filter(
     (item) => !configuredAppIds.includes(item.app),
@@ -135,6 +154,8 @@ const SpeechRulesManager: React.FC = () => {
       <AddAppRuleSection
         availableApps={availableDiscoveredApps}
         onAddApp={handleAddAppToRules}
+        onClearDiscovered={handleClearDiscovered}
+        onRefreshDiscovered={handleRefreshDiscovered}
       />
 
       {configuredAppIds.length === 0 && (
@@ -163,6 +184,7 @@ const SpeechRulesManager: React.FC = () => {
             availableChannels={availableChannels}
             key={app}
             onAddChannel={handleAddChannelToRule}
+            onRefreshDiscovered={handleRefreshDiscovered}
             onRemoveApp={handleRemoveAppFromRules}
             onRemoveChannel={handleRemoveChannelFromRule}
             onToggleApp={toggleApp}
