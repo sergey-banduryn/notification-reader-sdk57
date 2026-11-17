@@ -25,6 +25,13 @@ function RootLayout() {
       <Tabs.Screen
         name='index'
         options={{
+          tabBarIcon: getTabBarIcon('П'),
+          title: 'Приложения',
+        }}
+      />
+      <Tabs.Screen
+        name='settings'
+        options={{
           tabBarIcon: getTabBarIcon('Н'),
           title: 'Настройки',
         }}

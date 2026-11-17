@@ -1,9 +1,7 @@
-import Constants from 'expo-constants';
-
+import { discoveredChannelsService } from '@/services/DiscoveredChannelsService';
 import { logError, logNotification } from '@/services/LoggerService';
 import { speechQueueService } from '@/services/SpeechQueueService';
-
-const APP_PACKAGE_NAME = Constants.expoConfig?.android?.package;
+import { speechRulesService } from '@/services/SpeechRulesService';
 
 type NotificationData = {
   app?: string;
@@ -37,12 +35,12 @@ const processNotification = async ({
   try {
     const data = loggedNotification;
 
-    if (
-      (data.app === 'com.whatsapp' ||
-        data.app === 'com.android.shell' ||
-        data.app === APP_PACKAGE_NAME) &&
-      data.title?.includes('Цехи')
-    ) {
+    void discoveredChannelsService.registerNotificationSource(
+      data.app,
+      data.title,
+    );
+
+    if (await speechRulesService.shouldSpeak(data.app, data.title)) {
       const text: string = data.text ?? '';
       let textToSpeak: string = text.trim();
 
