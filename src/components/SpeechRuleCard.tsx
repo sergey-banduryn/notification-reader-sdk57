@@ -16,7 +16,7 @@ type SpeechRuleCardProps = {
   availableChannels: string[];
   onAddChannel: (app: string, channel: string) => Promise<void>;
   onRefreshDiscovered: () => Promise<void>;
-  onRemoveApp: (app: string) => Promise<void>;
+  onRemoveApp: (app: string) => void;
   onRemoveChannel: (app: string, channel: string) => Promise<void>;
   onToggleApp: (app: string, enabled: boolean) => void;
   onToggleSpeakAll: (app: string, speakAll: boolean) => void;
@@ -61,7 +61,9 @@ const SpeechRuleCard: React.FC<SpeechRuleCardProps> = ({
             value={rule.enabled}
           />
           <TouchableOpacity
-            onPress={() => void onRemoveApp(app)}
+            onPress={() => {
+              onRemoveApp(app);
+            }}
             style={styles.deleteAppBtn}
           >
             <Text style={styles.deleteAppText}>✕</Text>

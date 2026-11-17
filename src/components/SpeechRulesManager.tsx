@@ -53,11 +53,22 @@ const SpeechRulesManager: React.FC = () => {
     await speechRulesService.addAppRule(cleanApp);
   };
 
-  const handleRemoveAppFromRules = async (app: string) => {
-    setRules((prev) =>
-      Object.fromEntries(Object.entries(prev).filter(([key]) => key !== app)),
-    );
-    await speechRulesService.removeAppRule(app);
+  const handleRemoveAppFromRules = (app: string) => {
+    Alert.alert('', 'Удалить приложение?', [
+      { style: 'cancel', text: 'Отмена' },
+      {
+        onPress: () => {
+          setRules((prev) =>
+            Object.fromEntries(
+              Object.entries(prev).filter(([key]) => key !== app),
+            ),
+          );
+          void speechRulesService.removeAppRule(app);
+        },
+        style: 'destructive',
+        text: 'Удалить',
+      },
+    ]);
   };
 
   const toggleApp = (app: string, enabled: boolean) => {
