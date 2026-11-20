@@ -2,7 +2,10 @@ import { discoveredChannelsService } from '@/services/DiscoveredChannelsService'
 import { logError, logNotification } from '@/services/LoggerService';
 import { speechQueueService } from '@/services/SpeechQueueService';
 import { speechRulesService } from '@/services/SpeechRulesService';
-import { loadProcessGroupedMessages } from '@/services/StorageService';
+import {
+  loadLogNotifications,
+  loadProcessGroupedMessages,
+} from '@/services/StorageService';
 
 type NotificationData = {
   app?: string;
@@ -31,7 +34,9 @@ const processNotification = async ({
     notification,
   ) as NotificationData;
 
-  void logNotification(loggedNotification);
+  if (await loadLogNotifications()) {
+    void logNotification(loggedNotification);
+  }
 
   try {
     const data = loggedNotification;

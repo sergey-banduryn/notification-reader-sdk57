@@ -6,6 +6,7 @@ const VOLUME_KEY = '@tts_volume_level';
 const INITIAL_SYSTEM_VOLUME_KEY = '@initial_system_volume';
 const MUTE_KEY = 'app_speech_muted';
 const GROUPED_MESSAGES_KEY = '@process_grouped_messages';
+const LOG_NOTIFICATIONS_KEY = '@log_notifications';
 
 const saveVolume = async (value: number): Promise<void> => {
   try {
@@ -90,12 +91,43 @@ const saveProcessGroupedMessages = async (enabled: boolean): Promise<void> => {
   }
 };
 
+let cachedLogNotifications: boolean | null = null;
+
+const loadLogNotifications = async (): Promise<boolean> => {
+  if (cachedLogNotifications !== null) {
+    return cachedLogNotifications;
+  }
+
+  try {
+    const value = await AsyncStorage.getItem(LOG_NOTIFICATIONS_KEY);
+    cachedLogNotifications = value !== null ? value === 'true' : true;
+
+    return cachedLogNotifications;
+  } catch (error) {
+    await logError('loadLogNotifications', error);
+
+    return true;
+  }
+};
+
+const saveLogNotifications = async (enabled: boolean): Promise<void> => {
+  cachedLogNotifications = enabled;
+
+  try {
+    await AsyncStorage.setItem(LOG_NOTIFICATIONS_KEY, String(enabled));
+  } catch (error) {
+    await logError('saveLogNotifications', error);
+  }
+};
+
 export {
   loadInitialSystemVolume,
+  loadLogNotifications,
   loadMuted,
   loadProcessGroupedMessages,
   loadVolume,
   saveInitialSystemVolume,
+  saveLogNotifications,
   saveMuted,
   saveProcessGroupedMessages,
   saveVolume,

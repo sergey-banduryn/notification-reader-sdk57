@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 
+import { LogNotificationsControl } from '@/components/LogNotificationsControl';
 import {
   clearAllLogs,
   getErrorLogs,
@@ -56,6 +57,7 @@ const LogViewer: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Логи</Text>
+      <LogNotificationsControl />
       <View style={styles.tabContainer}>
         <TouchableOpacity
           onPress={() => {
