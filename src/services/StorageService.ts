@@ -5,6 +5,7 @@ import { logError } from './LoggerService';
 const VOLUME_KEY = '@tts_volume_level';
 const INITIAL_SYSTEM_VOLUME_KEY = '@initial_system_volume';
 const MUTE_KEY = 'app_speech_muted';
+const GROUPED_MESSAGES_KEY = '@process_grouped_messages';
 
 const saveVolume = async (value: number): Promise<void> => {
   try {
@@ -60,11 +61,42 @@ const saveMuted = async (isMuted: boolean): Promise<void> => {
   await AsyncStorage.setItem(MUTE_KEY, String(isMuted));
 };
 
+let cachedProcessGroupedMessages: boolean | null = null;
+
+const loadProcessGroupedMessages = async (): Promise<boolean> => {
+  if (cachedProcessGroupedMessages !== null) {
+    return cachedProcessGroupedMessages;
+  }
+
+  try {
+    const value = await AsyncStorage.getItem(GROUPED_MESSAGES_KEY);
+    cachedProcessGroupedMessages = value !== null ? value === 'true' : true;
+
+    return cachedProcessGroupedMessages;
+  } catch (error) {
+    await logError('loadProcessGroupedMessages', error);
+
+    return true;
+  }
+};
+
+const saveProcessGroupedMessages = async (enabled: boolean): Promise<void> => {
+  cachedProcessGroupedMessages = enabled;
+
+  try {
+    await AsyncStorage.setItem(GROUPED_MESSAGES_KEY, String(enabled));
+  } catch (error) {
+    await logError('saveProcessGroupedMessages', error);
+  }
+};
+
 export {
   loadInitialSystemVolume,
   loadMuted,
+  loadProcessGroupedMessages,
   loadVolume,
   saveInitialSystemVolume,
   saveMuted,
+  saveProcessGroupedMessages,
   saveVolume,
 };

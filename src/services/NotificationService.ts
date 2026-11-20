@@ -2,6 +2,7 @@ import { discoveredChannelsService } from '@/services/DiscoveredChannelsService'
 import { logError, logNotification } from '@/services/LoggerService';
 import { speechQueueService } from '@/services/SpeechQueueService';
 import { speechRulesService } from '@/services/SpeechRulesService';
+import { loadProcessGroupedMessages } from '@/services/StorageService';
 
 type NotificationData = {
   app?: string;
@@ -45,8 +46,13 @@ const processNotification = async ({
       let textToSpeak: string = text.trim();
 
       const { groupedMessages } = data;
+      const shouldProcessGrouped = await loadProcessGroupedMessages();
 
-      if (groupedMessages && groupedMessages.length !== 0) {
+      if (
+        shouldProcessGrouped &&
+        groupedMessages &&
+        groupedMessages.length !== 0
+      ) {
         const lastMessage = groupedMessages[groupedMessages.length - 1];
         textToSpeak = lastMessage.text ?? '';
       }

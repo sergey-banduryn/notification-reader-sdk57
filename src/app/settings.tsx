@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ForegroundServiceControl } from '@/components/ForegroundServiceControl';
+import { GroupedMessagesControl } from '@/components/GroupedMessagesControl';
 import { Permissions } from '@/components/Permissions';
 import { VolumeControl } from '@/components/VolumeControl';
 import { useAppManager } from '@/hooks/useAppManager';
@@ -17,6 +18,7 @@ function SettingsScreen() {
         <View style={styles.settingsContainer}>
           <ForegroundServiceControl {...{ permissions }} />
           <VolumeControl />
+          <GroupedMessagesControl />
         </View>
       </ScrollView>
     </SafeAreaView>
