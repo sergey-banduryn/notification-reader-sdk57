@@ -48,7 +48,7 @@ const getNotificationLogs = async (): Promise<string> => {
 
     const content = await FileSystem.readFile(NOTIFICATION_LOG_PATH, 'utf8');
 
-    return content.trim().split(splitter).reverse().join(splitter);
+    return content;
   } catch {
     return 'Ошибка при чтении файла логов уведомлений.';
   }
@@ -65,7 +65,7 @@ const getErrorLogs = async (): Promise<string> => {
 
     const content = await FileSystem.readFile(ERROR_LOG_PATH, 'utf8');
 
-    return content.trim().split(splitter).reverse().join(splitter);
+    return content;
   } catch {
     return 'Ошибка при чтении файла логов ошибок.';
   }
