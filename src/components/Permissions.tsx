@@ -50,7 +50,7 @@ const Permissions: React.FC<{ permissions: PermissionsProps }> = ({
 
         <View style={styles.permissionCard}>
           <Text style={styles.permissionTitle}>
-            Отображать закрепленное уведомление
+            Показывать свои уведомления
           </Text>
           <Text style={styles.statusText}>
             Статус:{' '}
