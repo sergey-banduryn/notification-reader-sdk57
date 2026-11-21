@@ -55,7 +55,8 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   label: {
-    fontSize: 16,
+    flexBasis: 160,
+    fontSize: 14,
     marginRight: 10,
   },
   switch: { transform: [{ scale: 1.5 }] },
