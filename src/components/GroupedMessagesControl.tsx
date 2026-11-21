@@ -33,7 +33,6 @@ const GroupedMessagesControl: React.FC = () => {
       <Text style={styles.label}>Обрабатывать групповые сообщения:</Text>
       <Switch
         onValueChange={toggleSwitch}
-        style={styles.switch}
         thumbColor={isEnabled ? '#FFFFFF' : '#F4F3F4'}
         trackColor={{ false: '#767577', true: '#4BA3E3' }}
         value={isEnabled}
