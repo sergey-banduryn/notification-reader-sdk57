@@ -8,6 +8,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    if: contains(github.event.head_commit.message, '[debug]') || contains(github.event.head_commit.message, '[release]')
+
     steps:
       - name: Клонирование репозитория
         uses: actions/checkout@v5
@@ -48,20 +50,16 @@ jobs:
         run: |
           MSG="${{ github.event.head_commit.message }}"
 
-          if [[ "$MSG" == *"[debug]"* ]]; then
-            TYPE="debug"
-          elif [[ "$MSG" == *"[release]"* ]]; then
+          if [[ "$MSG" == *"[release]"* ]]; then
             TYPE="release"
+            TASK="assembleRelease"
           else
-            TYPE="debug" # По умолчанию при отсутствии меток
+            TYPE="debug"
+            TASK="assembleDebug"
           fi
 
           echo "BUILD_TYPE=$TYPE" >> $GITHUB_ENV
-          if [ "$TYPE" = "debug" ]; then
-            echo "TASK=assembleDebug" >> $GITHUB_ENV
-          else
-            echo "TASK=assembleRelease" >> $GITHUB_ENV
-          fi
+          echo "TASK=$TASK" >> $GITHUB_ENV
 
       - name: Настройка подписи Debug-ключом для Release
         if: ${{ env.BUILD_TYPE == 'release' }}
