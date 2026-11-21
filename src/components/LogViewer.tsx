@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -24,6 +24,8 @@ const LogViewer: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('notifications');
   const [logText, setLogText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
+
+  const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     void fetchLogs(activeTab).then((content) => {
@@ -52,6 +54,10 @@ const LogViewer: React.FC = () => {
     setLoading(true);
     await clearAllLogs();
     await handleRefresh();
+  };
+
+  const handleScrollToBottom = () => {
+    scrollViewRef.current?.scrollToEnd({ animated: true });
   };
 
   return (
@@ -106,11 +112,21 @@ const LogViewer: React.FC = () => {
           style={{ marginTop: 20 }}
         />
       ) : (
-        <ScrollView style={styles.logBox}>
-          <Text selectable style={styles.logText}>
-            {logText}
-          </Text>
-        </ScrollView>
+        <View style={styles.logContainer}>
+          <ScrollView ref={scrollViewRef} style={styles.logBox}>
+            <Text selectable style={styles.logText}>
+              {logText}
+            </Text>
+          </ScrollView>
+
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handleScrollToBottom}
+            style={styles.scrollToBottomButton}
+          >
+            <Text style={styles.scrollToBottomText}>↓</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -144,10 +160,30 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 10,
   },
+  logContainer: {
+    flex: 1,
+    position: 'relative',
+  },
   logText: {
     color: '#00FF00',
     fontFamily: 'monospace',
     fontSize: 12,
+  },
+  scrollToBottomButton: {
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 122, 255, 0.85)',
+    borderRadius: 20,
+    bottom: 16,
+    height: 40,
+    justifyContent: 'center',
+    position: 'absolute',
+    right: 16,
+    width: 40,
+  },
+  scrollToBottomText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   tab: {
     alignItems: 'center',
